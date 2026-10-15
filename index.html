@@ -282,6 +282,11 @@ section.active{display:block}
 .card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--navy);opacity:0;transition:opacity .16s}
 .card:hover{transform:translateY(-3px);box-shadow:var(--lift);border-color:#ddd7ca}
 .card:hover::before{opacity:1}
+.curl{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:8px;border-top:1px dashed var(--line)}
+.curl-txt{font:11.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink-soft,#7a8496);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;min-width:0}
+.curl-copy{flex:none;font:600 11px/1 inherit;background:transparent;border:1px solid var(--line);border-radius:99px;padding:5px 10px;color:var(--ink-soft,#7a8496);cursor:pointer;transition:border-color .15s,color .15s}
+.curl-copy:hover{border-color:var(--gold);color:var(--navy)}
+.curl-copy.ok{border-color:#2e9e5b;color:#2e9e5b}
 .card.featured{border:1.5px solid var(--gold);background:linear-gradient(180deg,#fdf8ee 0%,#fff 55%)}
 .card.featured::before{opacity:1;background:var(--gold)}
 .card h4{font-size:15.5px;font-weight:800;line-height:1.35}
@@ -811,6 +816,7 @@ function card(x){
     <h4><a href="${x.u}" target="_blank" rel="noopener">${x.n}</a></h4>
     <p>${x.d}</p>
     <div class="tags">${isFresh(x.add)?'<span class="pill nw">New</span>':""}${x.f?'<span class="pill hl">Top Pick</span>':""}${x.dl?'<span class="pill dl">Downloadable</span>':""}${x.lvl?'<span class="pill lvl">'+x.lvl+'</span>':""}${pills}${meta}${fnt}</div>
+    ${/^https?:/.test(x.u)?`<div class="curl" title="${x.u}"><span class="curl-txt">${x.u.replace(/^https?:\/\//,"").replace(/\/$/,"")}</span><button class="curl-copy" type="button" data-u="${x.u}" title="Copy the link">Copy link</button></div>`:""}
   </div>`;
 }
 function renderSection(){
@@ -1068,6 +1074,15 @@ Object.keys(SECTIONS).forEach(tk=>SECTIONS[tk].forEach(g=>g.i.forEach(it=>{if(it
 const TABNAMES={boards:"Job Boards",industry:"By Industry",ai:"AI Tools",networking:"Networking Groups",speakers:"Speaker Groups",disability:"Disability & Neurodivergent",lgbtq:"LGBTQ+",support:"Free Career Support",volunteer:"Volunteer & Internships",ldp:"Leadership Programs",staffing:"Exec Search & Staffing",additional:"Additional Resources",profile:"True North",submit:"Suggest a Resource",about:"About"};
 // ---- toast ----
 function toast(m){const t=document.createElement("div");t.className="cc-toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.classList.add("show"),10);setTimeout(()=>{t.classList.remove("show");setTimeout(()=>t.remove(),400)},2600);}
+document.addEventListener("click",async e=>{
+  const b=e.target.closest(".curl-copy");if(!b)return;
+  const u=b.dataset.u;
+  const finish=(ok)=>{b.textContent="Copied!";b.classList.add("ok");toast(ok?"Link copied — if the card link ever fails, paste this into your browser.":"Couldn't copy — the address is in the tooltip; long-press the card title instead.");setTimeout(()=>{b.textContent="Copy link";b.classList.remove("ok")},2400);};
+  try{
+    if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(u);finish(true);}
+    else{const ta=document.createElement("textarea");ta.value=u;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();const ok=document.execCommand("copy");ta.remove();finish(ok);}
+  }catch(_){finish(false);}
+});
 // ---- modal system ----
 let modalEl=null;
 function renderModal(html){closeModal();modalEl=document.createElement("div");modalEl.id="ccModal";modalEl.innerHTML='<div class="ccm-back"></div><div class="ccm-panel"><button class="ccm-close" title="Close (Esc)">✕</button>'+html+'</div>';document.body.appendChild(modalEl);document.body.style.overflow="hidden";modalEl.querySelector(".ccm-close").onclick=closeModal;modalEl.querySelector(".ccm-back").onclick=closeModal;}
