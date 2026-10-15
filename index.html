@@ -439,7 +439,28 @@ mark.hl{background:var(--gold-soft);color:var(--gold-deep);border-radius:3px;pad
 
 html{scroll-padding-top:132px}
 .category{scroll-margin-top:132px}
+
+.info{position:absolute;top:12px;right:80px;width:30px;height:30px;border-radius:999px;border:1px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;font-size:14px;line-height:1;color:#8a93a3;cursor:pointer;padding:0;z-index:2;box-shadow:0 1px 2px rgba(20,35,60,.05);transition:color .13s,border-color .13s}
+.info:hover{color:var(--gold);border-color:var(--gold)}
+.pers-wrap{margin:18px 0 8px;padding:16px;border:1px solid var(--line);border-radius:var(--radius);background:var(--card)}
+.pers-title{font-size:13px;font-weight:600;color:var(--muted,#7a8496);margin-bottom:10px}
+.pers-row{display:flex;flex-wrap:wrap;gap:8px}
+.pers-chip{display:flex;flex-direction:column;align-items:flex-start;gap:1px;padding:9px 14px;border:1px solid var(--line);border-radius:12px;background:transparent;cursor:pointer;text-align:left;transition:border-color .15s,box-shadow .15s}
+.pers-chip b{font-size:13.5px;color:var(--navy,#16283e)}
+.pers-chip span{font-size:11.5px;color:var(--muted,#7a8496)}
+.pers-chip:hover{border-color:var(--gold);box-shadow:0 2px 8px rgba(232,197,106,.25)}
+[data-theme="dark"] .pers-chip b{color:#e8ecf3}
+.ccm-title{margin:2px 0 4px;font-size:20px}
+.ccm-crumb{font-size:12.5px;color:var(--muted,#7a8496);margin:0 0 12px}
+.ccm-meta{font-size:12.5px;color:var(--muted,#7a8496);margin-top:12px}
+.ccm-open{display:inline-block;padding:9px 16px;border-radius:99px;background:var(--gold);color:#16283e;font-weight:700;font-size:13.5px;text-decoration:none}
+.ccm-open:hover{filter:brightness(1.06)}
 </style>
+<link rel="canonical" href="https://career-compass-bgw.pages.dev/">
+<meta property="og:url" content="https://career-compass-bgw.pages.dev/">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Career Compass","alternateName":"Career Compass — A Free Resource Hub for Job Seekers","url":"https://career-compass-bgw.pages.dev/","description":"1771+ vetted job boards, free AI resume and interview tools, networking groups, leadership programs, and inclusive career support for every US state. Free for job seekers, nothing sponsored.","inLanguage":"en","isAccessibleForFree":true,"publisher":{"@type":"Organization","name":"Career Compass"}}</script>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -518,14 +539,14 @@ html{scroll-padding-top:132px}
     <select id="catSel" aria-label="Jump to a category"><option value="">Jump to category…</option></select>
     <div class="tb-meta">
       <span class="count" id="count"></span>
-      <button class="clearbtn" id="newBtn" title="Resources added in the last 7 days">New this week</button>
-      <button class="clearbtn" id="savedBtn" title="Your saved favorites">Saved (0)</button>
-      <button class="clearbtn" id="dlBtn" title="Show only downloadable templates, workbooks and guides">⬇ Downloadable</button>
-      <button class="clearbtn" id="topBtn" title="Show only our Top Picks — free standouts like Never Search Alone">★ Top picks</button>
-      <button class="clearbtn" id="cmpBtn" title="Compare your picks side-by-side">Compare (0)</button>
-      <button class="clearbtn" id="recentBtn" title="Browse everything we have added, newest first">Recently added</button>
-      <button class="clearbtn" id="issueBtn" title="Spotted a broken link or a bug? Tell Bradley">⚠ Report issue</button>
-      <button class="clearbtn" id="surpriseBtn" title="Get a random resource to discover something new">Surprise me</button>
+      <button class="clearbtn" id="newBtn" title="Resources added in the last 7 days" aria-label="Resources added in the last 7 days">New this week</button>
+      <button class="clearbtn" id="savedBtn" title="Your saved favorites" aria-label="Your saved favorites">Saved (0)</button>
+      <button class="clearbtn" id="dlBtn" title="Show only downloadable templates, workbooks and guides" aria-label="Show only downloadable templates, workbooks and guides">⬇ Downloadable</button>
+      <button class="clearbtn" id="topBtn" title="Show only our Top Picks — free standouts like Never Search Alone" aria-label="Show only our Top Picks — free standouts like Never Search Alone">★ Top picks</button>
+      <button class="clearbtn" id="cmpBtn" title="Compare your picks side-by-side" aria-label="Compare your picks side-by-side">Compare (0)</button>
+      <button class="clearbtn" id="recentBtn" title="Browse everything we have added, newest first" aria-label="Browse everything we have added, newest first">Recently added</button>
+      <button class="clearbtn" id="issueBtn" title="Spotted a broken link or a bug? Tell Bradley" aria-label="Spotted a broken link or a bug? Tell Bradley">⚠ Report issue</button>
+      <button class="clearbtn" id="surpriseBtn" title="Get a random resource to discover something new" aria-label="Get a random resource to discover something new">Surprise me</button>
       <button class="clearbtn" id="clearBtn">Clear filters</button>
     </div>
   </div>
@@ -579,7 +600,11 @@ html{scroll-padding-top:132px}
           <button id="pf-save" class="pbtn">Build my plan →</button>
         </div>
       </div>
-      <div id="pf-plan" style="display:none"></div>
+      <div class="pers-wrap">
+        <div class="pers-title">Or pick a quick-start path — one click loads a starter plan you can tweak:</div>
+        <div id="persRow" class="pers-row"></div>
+      </div>
+    <div id="pf-plan" style="display:none"></div>
     </div>
   </section>
 
@@ -852,6 +877,7 @@ const STATES=["Alabama","Alaska","Arizona","Arkansas","California","Colorado","C
 /* =============== STATE (filters) =============== */
 let activeTab="profile", q="", fns=new Set(), cost="", state="", newOnly=false, savedOnly=false, dlOnly=false, topOnly=false;
 let CMP=new Set();const URLIDX={};
+const TABLABELS={"boards":"Job Boards","industry":"By Industry","exec":"Exec Search & Staffing","ai":"AI Tools","ldp":"Leadership Programs","volunteer":"Volunteer & Internships","additional":"Additional Resources","networking":"Networking","speakers":"Speakers","support":"Free Career Support","disability":"Disability & Neurodivergent","lgbtq":"LGBTQ+","profile":"True North","submit":"Suggest a Resource"};
 const FAVS=new Set(JSON.parse(localStorage.getItem("ccFavs")||"[]"));
 const isFresh=d=>{if(!d)return false;const t=new Date(d).getTime();return t>0&&Date.now()-t<7*864e5;};
 
@@ -875,10 +901,11 @@ function card(x){
   return `<div class="card${x.f?" featured":""}">
     <button class="cmp${CMP.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Compare side-by-side" title="Compare side-by-side">⇄</button>
     <button class="fav${FAVS.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Save to favorites" title="Save to favorites">${FAVS.has(x.u)?"♥":"♡"}</button>
+    <button class="info" data-u="${x.u}" aria-label="Resource details" title="Resource details">ⓘ</button>
     <h4><a href="${x.u}" target="_blank" rel="noopener">${hl(x.n)}</a></h4>
     <p>${hl(x.d)}</p>
     <div class="tags">${isFresh(x.add)?'<span class="pill nw">New</span>':""}${x.f?'<span class="pill hl">Top Pick</span>':""}${x.dl?'<span class="pill dl">Downloadable</span>':""}${x.lvl?'<span class="pill lvl">'+x.lvl+'</span>':""}${pills}${meta}${fnt}</div>
-    ${/^https?:/.test(x.u)?`<div class="curl" title="${x.u}"><span class="curl-txt">${x.u.replace(/^https?:\/\//,"").replace(/\/$/,"")}</span><button class="curl-copy" type="button" data-u="${x.u}" title="Copy the link">Copy link</button></div>`:""}
+    ${/^https?:/.test(x.u)?`<div class="curl" title="${x.u}"><span class="curl-txt">${x.u.replace(/^https?:\/\//,"").replace(/\/$/,"")}</span><button class="curl-copy" type="button" data-u="${x.u}" title="Copy the link" aria-label="Copy the link">Copy link</button></div>`:""}
   </div>`;
 }
 function renderSection(){
@@ -1008,7 +1035,7 @@ window.clearAll=clearAll;
     }
     out.innerHTML='<div class="plan-card"><div class="plan-hi">Your plan, '+(p.name?p.name.split(" ")[0]:"friend")+'</div><h3>'+steps.length+' steps to start today</h3>'
       +steps.map((s,i)=>'<div class="plan-step"><div class="plan-num">'+(i+1)+'</div><div><b>'+s[0]+'</b><p>'+s[1]+'</p></div></div>').join("")
-      +'<div class="plan-actions"><button class="plan-ai" id="pf-ai">Ask Compass for a deeper plan →</button><button class="plan-ai" id="pf-print" title="Print or save as PDF">Print / Save as PDF</button><button class="plan-ai" id="pf-share" title="Copy a link that rebuilds this exact plan">Share this plan</button></div></div>';
+      +'<div class="plan-actions"><button class="plan-ai" id="pf-ai">Ask Compass for a deeper plan →</button><button class="plan-ai" id="pf-print" title="Print or save as PDF" aria-label="Print or save as PDF">Print / Save as PDF</button><button class="plan-ai" id="pf-share" title="Copy a link that rebuilds this exact plan" aria-label="Copy a link that rebuilds this exact plan">Share this plan</button></div></div>';
     out.style.display="block";
     document.getElementById("pf-ai").onclick=()=>{
       const bits=[];
@@ -1058,6 +1085,28 @@ try{
       renderPlan(saved);
     }
   }catch(e){}
+})();
+
+/* ---- persona quick-start paths ---- */
+(function(){
+const PERSONAS=[
+ {n:"Recent grad",sub:"First full-time role",p:{role:"My first full-time role",ind:"Tech / Software",stage:"Recent graduate",chal:"Finding the right openings"}},
+ {n:"Career pivoter",sub:"Switching fields",p:{role:"Breaking into a new field",ind:"Tech / Software",stage:"Career pivoter — changing fields",chal:"Changing careers entirely"}},
+ {n:"Returning after a break",sub:"Re-entering work",p:{role:"Re-entering the workforce",ind:"Other / Not sure yet",stage:"Returning after a career break",chal:"Resume & applications"}},
+ {n:"Just laid off",sub:"Next role, fast",p:{role:"Next role, fast",ind:"Other / Not sure yet",stage:"Mid-career (3–10 yrs)",chal:"Income stopped — need survival help"}},
+ {n:"50+ or later career",sub:"Experience valued",p:{role:"A role that values experience",ind:"Other / Not sure yet",stage:"50+ or later career",chal:"Interviewing"}},
+ {n:"Student exploring",sub:"Skills & options",p:{role:"Exploring what's out there",ind:"Other / Not sure yet",stage:"Student",chal:"Building new skills"}}
+];
+const row=document.getElementById("persRow");
+if(row){row.innerHTML=PERSONAS.map((x,i)=>'<button class="pers-chip" data-i="'+i+'"><b>'+x.n+'</b><span>'+x.sub+'</span></button>').join("");
+row.addEventListener("click",e=>{const c=e.target.closest(".pers-chip");if(!c)return;const x=PERSONAS[+c.dataset.i];
+const p=Object.assign({name:"",role:"",ind:"",stage:"",state:"",chal:""},x.p);
+const pids={name:"pf-name",role:"pf-role",ind:"pf-industry",stage:"pf-stage",state:"pf-state",chal:"pf-challenge"};
+for(const k in pids){if(p[k]!==undefined){const el=document.getElementById(pids[k]);if(el)el.value=p[k]||"";}}
+const sb=document.getElementById("pf-save");if(sb)sb.click();
+toast("Loaded the '"+x.n+"' starter plan — tweak anything, then rebuild.");
+const pl=document.getElementById("pf-plan");if(pl)pl.scrollIntoView({behavior:"smooth",block:"start"});
+});}
 })();
 /* ---- settings ---- */
 (function(){
@@ -1151,6 +1200,12 @@ dlBtn.onclick=()=>{dlOnly=!dlOnly;dlBtn.classList.toggle("on",dlOnly);renderSect
 topBtn.onclick=()=>{topOnly=!topOnly;topBtn.classList.toggle("on",topOnly);renderSection();};
 updFavBtn();
 document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;e.preventDefault();e.stopPropagation();const u=b.dataset.u;if(FAVS.has(u))FAVS.delete(u);else FAVS.add(u);localStorage.setItem("ccFavs",JSON.stringify([...FAVS]));b.classList.toggle("on",FAVS.has(u));b.textContent=FAVS.has(u)?"♥":"♡";updFavBtn();});
+document.addEventListener("click",e=>{const b=e.target.closest(".info");if(!b)return;e.preventDefault();e.stopPropagation();const x=URLIDX[b.dataset.u];if(!x||!x.it)return;const it=x.it;
+  const cost=it.p?it.p.charAt(0).toUpperCase()+it.p.slice(1):"Free";
+  const tags=(it.fn||[]).map(t=>'<span class="fn-tag">'+t+'</span>').join(" ");
+  const pills=(it.f?'<span class="pill hl">Top Pick</span>':"")+(it.dl?'<span class="pill dl">Downloadable</span>':"")+(it.lvl?'<span class="pill lvl">'+it.lvl+'</span>':"")+(it.m?'<span class="pill meta">'+it.m+'</span>':"");
+  renderModal('<h3 class="ccm-title">'+it.n+'</h3><p class="ccm-crumb">'+(TABLABELS[x.tk]||x.tk)+' &middot; '+x.cat+'</p><div class="tags">'+pills+'<span class="fn-tag">'+cost+'</span>'+tags+'</div><p style="margin:14px 0">'+it.d+'</p><div class="curl" title="'+it.u+'"><span class="curl-txt">'+it.u.replace(/^https?:\/\//,"")+'</span><button class="curl-copy" type="button" data-u="'+it.u+'" title="Copy the link" aria-label="Copy the link">Copy link</button></div><p class="ccm-meta">Added to Career Compass: '+(it.add||"earlier")+'. Every link on the site was re-verified in the October 15, 2026 sweep.</p><div style="margin-top:16px"><a class="ccm-open" href="'+it.u+'" target="_blank" rel="noopener">Open resource ↗</a></div>');
+});
 // ---- URL index for compare/recent ----
 Object.keys(SECTIONS).forEach(tk=>SECTIONS[tk].forEach(g=>g.i.forEach(it=>{if(it&&it.u)URLIDX[it.u]={it,tk,cat:g.c};})));
 const TABNAMES={boards:"Job Boards",industry:"By Industry",ai:"AI Tools",networking:"Networking Groups",speakers:"Speaker Groups",disability:"Disability & Neurodivergent",lgbtq:"LGBTQ+",support:"Free Career Support",volunteer:"Volunteer & Internships",ldp:"Leadership Programs",staffing:"Exec Search & Staffing",additional:"Additional Resources",profile:"True North",submit:"Suggest a Resource",about:"About"};
@@ -1167,7 +1222,7 @@ document.addEventListener("click",async e=>{
 });
 // ---- modal system ----
 let modalEl=null;
-function renderModal(html){closeModal();modalEl=document.createElement("div");modalEl.id="ccModal";modalEl.innerHTML='<div class="ccm-back"></div><div class="ccm-panel"><button class="ccm-close" title="Close (Esc)">✕</button>'+html+'</div>';document.body.appendChild(modalEl);document.body.style.overflow="hidden";modalEl.querySelector(".ccm-close").onclick=closeModal;modalEl.querySelector(".ccm-back").onclick=closeModal;}
+function renderModal(html){closeModal();modalEl=document.createElement("div");modalEl.id="ccModal";modalEl.setAttribute("role","dialog");modalEl.setAttribute("aria-modal","true");modalEl.setAttribute("aria-label","Dialog");modalEl.innerHTML='<div class="ccm-back"></div><div class="ccm-panel"><button class="ccm-close" title="Close (Esc)" aria-label="Close dialog">✕</button>'+html+'</div>';document.body.appendChild(modalEl);document.body.style.overflow="hidden";modalEl.querySelector(".ccm-close").onclick=closeModal;modalEl.querySelector(".ccm-back").onclick=closeModal;}
 function closeModal(){if(modalEl){modalEl.remove();modalEl=null;}document.body.style.overflow="";}
 window.closeModal=closeModal;
 // ---- compare ----
@@ -1182,7 +1237,7 @@ document.addEventListener("click",e=>{const b=e.target.closest(".cmp-x");if(!b)r
 function buildCmpHTML(){
   const items=[...CMP].map(u=>URLIDX[u]).filter(Boolean);
   const cost=it=>PILL[it.p]?`<span class="pill ${PILL[it.p][0]}">${PILL[it.p][1]}</span>`:`<span class="pill">${it.p||"—"}</span>`;
-  const rows=[["Resource",x=>`<b>${x.it.n}</b>`],["Tab",x=>TABNAMES[x.tk]||x.tk],["Category",x=>x.cat],["Cost",x=>cost(x.it)],["Best for (career functions)",x=>(x.it.fn||[]).filter(v=>typeof v==="string").map(v=>`<span class="fn-tag">${v}</span>`).join(" ")||"—"],["Details",x=>x.it.m||"—"],["Added",x=>x.it.add||"—"],["Open",x=>`<a href="${x.it.u}" target="_blank" rel="noopener">Visit ↗</a> <button class="cmp-x" data-u="${x.it.u}" title="Remove from compare">✕</button>`],["Description",x=>`<span style="font-size:12.5px">${x.it.d}</span>`]];
+  const rows=[["Resource",x=>`<b>${x.it.n}</b>`],["Tab",x=>TABNAMES[x.tk]||x.tk],["Category",x=>x.cat],["Cost",x=>cost(x.it)],["Best for (career functions)",x=>(x.it.fn||[]).filter(v=>typeof v==="string").map(v=>`<span class="fn-tag">${v}</span>`).join(" ")||"—"],["Details",x=>x.it.m||"—"],["Added",x=>x.it.add||"—"],["Open",x=>`<a href="${x.it.u}" target="_blank" rel="noopener">Visit ↗</a> <button class="cmp-x" data-u="${x.it.u}" title="Remove from compare" aria-label="Remove from compare">✕</button>`],["Description",x=>`<span style="font-size:12.5px">${x.it.d}</span>`]];
   return `<h3 style="margin:0 0 4px">Compare resources</h3><p style="margin:0 0 14px;color:#8a93a3;font-size:13px">${items.length} side-by-side — click ✕ on any column to remove it.</p><div class="ccm-scroll"><table class="ccm-table"><tbody>`
     +rows.map(r=>`<tr><th>${r[0]}</th>`+items.map(x=>`<td>${r[1](x)}</td>`).join("")+"</tr>").join("")+"</tbody></table></div>";
 }
@@ -1384,7 +1439,7 @@ renderSection();
   document.body.appendChild(wrap);
   const q=wrap.querySelector("#cmdk-q"),list=wrap.querySelector("#cmdk-list");
   let IDX=null,active=0,rows=[];
-  const TABLABELS={"boards":"Job Boards","industry":"By Industry","exec":"Exec Search & Staffing","ai":"AI Tools","ldp":"Leadership Programs","volunteer":"Volunteer & Internships","additional":"Additional Resources","networking":"Networking","speakers":"Speakers","support":"Free Career Support","disability":"Disability & Neurodivergent","lgbtq":"LGBTQ+","profile":"True North","submit":"Suggest a Resource"};
+
   function build(){
     IDX=[];
     for(const tk of Object.keys(TABLABELS))IDX.push({k:"tab",n:TABLABELS[tk],sub:"Tab",tk:tk});
