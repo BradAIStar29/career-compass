@@ -257,6 +257,18 @@ section.active{display:block}
 .kit-body p{margin:0 0 8px;font-size:13.5px;line-height:1.5;color:var(--ink-soft,#4b5468)}
 .kit-go{display:inline-block;background:var(--gold-soft,#f7efdd);color:var(--gold-deep,#8a6d1f);border:1px solid var(--border,#e5e0d3);border-radius:8px;padding:6px 12px;font-size:12.5px;font-weight:700;cursor:pointer;margin-right:8px;margin-bottom:4px}
 [data-theme="dark"] .kit-go{background:#232f45;color:#d9b96a;border-color:#31435f}
+/* state survival bundle */
+.kit-state{background:linear-gradient(120deg,#f7f1e0,#fff);border:1px solid #ecd9b2;border-radius:12px;padding:14px 16px;margin:10px 0 4px}
+[data-theme="dark"] .kit-state{background:#1b2740;border-color:#31435f}
+.kit-state-h{font-weight:800;color:var(--navy);font-size:16px;margin-bottom:2px}
+[data-theme="dark"] .kit-state-h{color:var(--gold)}
+.kit-state-sub{font-size:12.5px;font-weight:700;color:var(--ink-soft,#4b5468);margin:10px 0 6px}
+.kit-list a{display:flex;flex-direction:column;gap:1px;text-decoration:none;padding:8px 10px;border-radius:8px;margin-bottom:6px;border:1px solid var(--border,#e5e0d3);background:rgba(255,255,255,.65)}
+[data-theme="dark"] .kit-list a{background:#101a2e;border-color:#31435f}
+.kit-list a b{color:var(--navy);font-size:13.5px}
+[data-theme="dark"] .kit-list a b{color:#e8e3d4}
+.kit-list a span{font-size:12px;color:var(--ink-soft,#4b5468)}
+.kit-list a:hover{border-color:var(--gold)}
 .kit-final{margin-top:16px;text-align:center}
 .kit-final button{background:var(--navy);color:var(--gold);border:none;border-radius:10px;padding:11px 22px;font-weight:800;font-size:14px;cursor:pointer}
 
@@ -1162,7 +1174,9 @@ renderChips();
 /* states */
 const stateSel=document.getElementById("stateSel");
 STATES.forEach(s=>{const o=document.createElement("option");o.value=s;o.textContent=s;stateSel.appendChild(o);});
-stateSel.onchange=()=>{state=stateSel.value;renderSpotlight();renderSection();};
+stateSel.onchange=()=>{state=stateSel.value;renderSpotlight();renderSection();updKitBtn();};
+function updKitBtn(){var b=document.getElementById("kitBtn");if(b)b.textContent=state?"\u{1F698} Just lost your job in "+state+"? Start here":"\u{1F698} Just lost your job? Start the free 7-day plan";}
+updKitBtn();
 /* search + cost */
 let deb;document.getElementById("q").oninput=e=>{clearTimeout(deb);deb=setTimeout(()=>{q=e.target.value.trim().toLowerCase();renderSection();renderGlobal();},160);};
 function renderGlobal(){
@@ -1316,13 +1330,22 @@ const KIT=[
 {d:"7",t:"Start conversations, not applications",b:"Referrals beat cold applications by a wide margin. Message your alumni network, and get a free 1-on-1 industry mentor — real humans, zero cost.",g:[{tab:"support",cat:"Alumni & University Resources",lb:"Alumni networks"},{tab:"support",cat:"Find a Free Mentor — Industry Advisors",lb:"Free mentors"}]}
 ];
 document.getElementById("kitBtn").onclick=function(){
+  var sg=(state&&STATEGROUPS[state])||[],sb2=(state&&STATEBENEFITS[state])||[];
+  var stateBlock='';
+  if(state&&(sg.length||sb2.length)){
+    stateBlock='<div class="kit-state"><div class="kit-state-h">\u{1F4CD} First, for '+state+': your local lifelines</div>'
+      +(sg.length?'<p class="kit-state-sub">Groups meeting in '+state+' right now — people who get it, zero cost:</p><div class="kit-list">'+sg.slice(0,4).map(function(g){return '<a href="'+g.u+'" target="_blank" rel="noopener"><b>'+g.n+'</b><span>'+g.d+'</span></a>'}).join("")+'</div>':'')
+      +(sb2.length?'<p class="kit-state-sub">Programs most people in '+state+' never claim — check these before anything else:</p><div class="kit-list">'+sb2.slice(0,4).map(function(b){return '<a href="'+b.u+'" target="_blank" rel="noopener"><b>'+b.t+'</b><span>'+b.d+'</span></a>'}).join("")+'</div>':'')
+      +'<button class="kit-go" data-sb="'+state+'">See everything for '+state+' on the map \u2192</button></div>';
+  }
   const kitHtml='<h3 style="font-family:inherit;margin:2px 0 4px;font-size:20px;color:var(--navy);font-weight:800">🆘 The 7-Day Starter Kit</h3>'
-  +'<p style="font-size:13px;color:var(--ink-soft,#4b5468);margin:0 0 6px">Just lost your job, or helping someone who did? Work through this week — every link is free. Come back any time; nothing here expires.</p>'
+  +'<p style="font-size:13px;color:var(--ink-soft,#4b5468);margin:0 0 6px">Just lost your job, or helping someone who did? Work through this week — every link is free. Come back any time; nothing here expires.</p>'+stateBlock
   +KIT.map(function(k){return '<div class="kit-day"><div class="kit-dnum">Day '+k.d+'</div><div class="kit-body"><h4>'+k.t+'</h4><p>'+k.b+'</p>'
     +k.g.map(function(g){return '<button class="kit-go" data-tab="'+g.tab+'" data-cat="'+g.cat+'">'+g.lb+' →</button>'}).join("")+'</div></div>'}).join("")
   +'<div class="kit-final"><button id="kitTn">From here, build your True North plan →</button></div>';
   renderModal(kitHtml);
   modalEl.querySelectorAll(".kit-go").forEach(function(b){b.onclick=function(){closeModal();goCat(b.dataset.tab,b.dataset.cat);}});
+  modalEl.querySelectorAll("[data-sb]").forEach(function(b){b.onclick=function(){closeModal();document.getElementById("spotlight").scrollIntoView({behavior:"smooth"});};});
   modalEl.querySelector("#kitTn").onclick=function(){closeModal();document.querySelector('.tab[data-tab="profile"]').click();window.scrollTo({top:0,behavior:"smooth"});};
 };
 
