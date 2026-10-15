@@ -500,7 +500,7 @@ body:not(.compact) .grid{gap:14px}
             <option>Tech / Software</option><option>Healthcare &amp; Nursing</option><option>Finance &amp; Accounting</option>
             <option>Marketing &amp; PR</option><option>Education &amp; Teaching</option><option>Skilled Trades &amp; Construction</option>
             <option>Sales &amp; Customer Success</option><option>HR &amp; People Ops</option><option>Nonprofit &amp; Social Impact</option>
-            <option>Creative, Media &amp; Entertainment</option><option>Supply Chain &amp; Logistics</option><option>Legal</option><option>Engineering &amp; Manufacturing</option><option>Human Services &amp; Social Work</option>
+            <option>Creative, Media &amp; Entertainment</option><option>Supply Chain &amp; Logistics</option><option>Legal</option><option>Engineering &amp; Manufacturing</option><option>Human Services &amp; Social Work</option><option>Government &amp; Public Sector</option><option>Arts, Music &amp; Entertainment</option><option>Hospitality &amp; Food Service</option><option>Biotech &amp; Pharma</option><option>Consulting</option><option>Transportation &amp; Trucking</option><option>Aviation &amp; Airlines</option><option>Public Safety &amp; First Responders</option><option>Science &amp; Research</option><option>Insurance &amp; Actuarial</option><option>Real Estate &amp; Property</option><option>Energy &amp; Utilities</option><option>Climate &amp; Sustainability</option><option>Sports, Fitness &amp; Recreation</option>
             <option>Other / Not sure yet</option>
           </select>
           <label>Your career stage</label>
@@ -515,6 +515,7 @@ body:not(.compact) .grid{gap:14px}
           <label>Your biggest challenge right now</label>
           <select id="pf-challenge">
             <option value="">Choose a challenge</option>
+            <option>Income stopped — need survival help</option>
             <option>Resume &amp; applications</option><option>Interviewing</option><option>Networking &amp; connections</option>
             <option>Finding the right openings</option><option>Changing careers entirely</option><option>Salary &amp; negotiation</option>
             <option>Getting on a leadership track</option><option>Building new skills</option>
@@ -897,11 +898,25 @@ window.clearAll=clearAll;
     const out=document.getElementById("pf-plan");
     const steps=[];
     const S={
-      "Tech / Software":"Tech / Software","Healthcare & Nursing":"Healthcare & Nursing","Finance & Accounting":"Finance & Accounting",
-      "Marketing & PR":"Marketing & PR","Education & Teaching":"Education & Teaching","Skilled Trades & Construction":"Skilled Trades & Construction",
-      "Sales & Customer Success":"Sales & Customer Success","HR & People Ops":"HR & People Ops","Nonprofit & Social Impact":"Nonprofit & Social Impact",
-      "Creative, Media & Entertainment":"Creative, Media & Entertainment","Supply Chain & Logistics":"Supply Chain & Logistics","Legal":"Legal","Engineering & Manufacturing":"Engineering & Manufacturing Jobs","Human Services & Social Work":"Human Services, Social Work & Counseling Jobs"};
-    if(p.ind&&S[p.ind])steps.push(["Open the <span class='plan-link' onclick=\"goCat('industry','"+S[p.ind]+"')\">By Industry → "+S[p.ind]+"</span> category","Niche boards see a fraction of the applicants the big boards do. Make these your daily search."]);
+      "Tech / Software":["industry","Tech / Software"],"Healthcare & Nursing":["industry","Healthcare & Nursing"],"Finance & Accounting":["industry","Finance & Accounting"],
+      "Marketing & PR":["industry","Marketing & PR"],"Education & Teaching":["industry","Education & Teaching"],"Skilled Trades & Construction":["industry","Skilled Trades & Construction"],
+      "Sales & Customer Success":["industry","Sales & Customer Success"],"HR & People Ops":["industry","HR & People Ops"],"Nonprofit & Social Impact":["industry","Nonprofit & Social Impact"],
+      "Creative, Media & Entertainment":["industry","Creative, Media & Entertainment"],"Supply Chain & Logistics":["industry","Supply Chain & Logistics"],"Legal":["industry","Legal"],
+      "Engineering & Manufacturing":["industry","Engineering & Manufacturing Jobs"],"Human Services & Social Work":["industry","Human Services, Social Work & Counseling Jobs"],
+      "Government & Public Sector":["boards","Government & Public Sector"],"Hospitality & Food Service":["industry","Hospitality, Culinary & Food Service"],
+      "Energy & Utilities":["industry","Energy & Utilities"],"Biotech & Pharma":["industry","Biotech, Pharma & Medical Devices"],
+      "Consulting":["industry","Consulting"],"Transportation & Trucking":["industry","Transportation & Trucking"],
+      "Aviation & Airlines":["industry","Aviation & Airlines"],"Public Safety & First Responders":["industry","Public Safety & First Responders"],
+      "Science & Research":["industry","Science & Research"],"Insurance & Actuarial":["industry","Insurance & Actuarial"],
+      "Real Estate & Property":["industry","Real Estate & Property"],"Climate & Sustainability":["industry","Climate, Sustainability & Green Jobs"],
+      "Sports, Fitness & Recreation":["industry","Sports & Recreation","Fitness & Wellness"],
+      "Arts, Music & Entertainment":["industry","Music Industry Jobs","Film, TV & Production Jobs","Performing Arts Jobs","Visual Arts & Photography Jobs","Fashion & Beauty"]};
+    if(p.ind&&S[p.ind]){
+      const r=S[p.ind],tab=r[0],cats=r.slice(1);
+      const links=cats.map(c=>"<span class='plan-link' onclick=\"goCat('"+tab+"','"+c.replace(/'/g,"\\'")+"')\">"+c+"</span>").join(", ");
+      const where=tab==="industry"?"By Industry":"Job Boards";
+      steps.push(["Your industry: "+cats[0],cats.length>1?"Work these "+where+" categories — each is a different corner of your field: "+links+".":"Open the "+links+" category in "+where+". Niche boards see a fraction of the applicants the big boards do — make these your daily search."]);
+    }
     else steps.push(["Browse the <span class='plan-link' onclick=\"goCat('boards','General & Mega Boards')\">Job Boards</span> tab","Start with the general boards, then narrow to your industry once you know your direction."]);
     const stageMap={
       "Student":"Check the <span class='plan-link' onclick=\"goCat('ldp','Undergraduate Rotational LDPs — Corporate')\">Leadership Programs</span> tab. Most LDPs open applications Aug–Oct — never pay to apply.",
@@ -914,18 +929,19 @@ window.clearAll=clearAll;
       "Mid-career (3–10 yrs)":"Combine the Networking tab with leadership credentials — and By Industry for your field's specialized boards."};
     if(p.stage&&stageMap[p.stage])steps.push(["Career stage play: "+p.stage,stageMap[p.stage]]);
     const chalMap={
-      "Resume & applications":["Free resume tools in <span class='plan-link' onclick=\"goCat('ai','AI Resume Builders & Optimizers')\">AI Tools</span>","Teal, Rezi, and Jobscan tailor your resume per posting — always free tiers first."],
-      "Interviewing":["Interview prep in AI Tools","Practice free with Pramp (mock interviews with peers) and Yoodli (AI feedback on your answers)."],
-      "Networking & connections":["The Networking tab + your state","Pick one association and one free community. Use the state selector for local job-seeker groups."],
-      "Finding the right openings":["Job Boards + By Industry","Set alerts on two general boards and two niche boards in your industry — quality over quantity."],
-      "Changing careers entirely":["LDP pivoters + By Industry","Management-trainee programs accept any major. Map your transferable skills with O*NET first."],
-      "Salary & negotiation":["Salary research in AI Tools","Use Glassdoor Salaries, Levels.fyi, and the free AAUW Work Smart negotiation workshop."],
-      "Getting on a leadership track":["The Leadership Programs tab","Search ProFellow's database, then target 5 programs in your field. Applications open in fall."],
-      "Building new skills":["Free learning in AI Tools","freeCodeCamp, Google Career Certificates, and MIT OCW are all free and employer-recognized."]};
-    if(p.chal&&chalMap[p.chal])steps.push(["Your challenge: "+p.chal,chalMap[p.chal][1]]);
+      "Resume & applications":["Free resume tools in <span class='plan-link' onclick=\"goCat('ai','AI Resume Builders & Optimizers')\">AI Tools</span>","Start from a <span class='plan-link' onclick=\"goCat('additional','Resume & Cover Letter Templates — Downloadable')\">free downloadable template</span> (Harvard DOCX, no email wall), tailor per posting with Teal/Rezi free tiers, then run it through an <span class='plan-link' onclick=\"goCat('additional','ATS Checkers & Resume Scanners')\">ATS checker</span>."],
+      "Interviewing":["<span class='plan-link' onclick=\"goCat('additional','Mock Interview Platforms')\">Mock interview platforms</span> + <span class='plan-link' onclick=\"goCat('additional','Interview Prep Guides & Question Banks')\">question banks</span>","Practice free with Pramp (peer mocks) and Yoodli (AI feedback), and grab a downloadable <span class='plan-link' onclick=\"goCat('additional','Interview Prep Workbooks & Trackers — Downloadable')\">interview workbook</span>."],
+      "Networking & connections":["The <span class='plan-link' onclick=\"goCat('networking','Industry & Professional Associations')\">Networking</span> tab + <span class='plan-link' onclick=\"goCat('support','Find a Free Mentor — Industry Advisors')\">free mentors</span>","Pick one association and one free community, and request an industry mentor — most people never ask, and they say yes."],
+      "Finding the right openings":["<span class='plan-link' onclick=\"goCat('industry','Tech / Software')\">By Industry</span> boards + <span class='plan-link' onclick=\"goCat('boards','Job Fairs & Hiring Events')\">job fairs &amp; hiring events</span>","Set alerts on two general boards and two niche boards in your industry, and check the events calendar — fairs put you in front of recruiters directly."],
+      "Changing careers entirely":["<span class='plan-link' onclick=\"goCat('additional','Career Assessments & Aptitude Tests')\">Career assessments</span> + LDP pivoters","Map your transferable skills with the free assessments first, then look at management-trainee programs that accept any major."],
+      "Salary & negotiation":["<span class='plan-link' onclick=\"goCat('additional','Salary Transparency & Equal Pay Laws')\">Salary transparency laws</span> + <span class='plan-link' onclick=\"goCat('additional','Salary Negotiation Guides')\">negotiation guides</span>","Check your state's pay-range law first — in many states employers must disclose salary. Then use the free AAUW Work Smart workshop before any offer conversation."],
+      "Getting on a leadership track":["The <span class='plan-link' onclick=\"goCat('ldp','Undergraduate Rotational LDPs — Corporate')\">Leadership Programs</span> tab","Search ProFellow's database, then target 5 programs in your field. Applications open in fall."],
+      "Building new skills":["<span class='plan-link' onclick=\"goCat('additional','Skill Certifications — Microsoft Office, AI & More')\">Free skill certifications</span> + <span class='plan-link' onclick=\"goCat('support','Get Certified Free — Funded Training for Unemployed')\">funded training</span>","freeCodeCamp and Google Career Certificates are free and employer-recognized — and if you are on unemployment, funded programs can pay for bigger certs."],
+      "Income stopped — need survival help":["<span class='plan-link' onclick=\"goCat('support','Financial Survival While Job Hunting')\">Financial survival</span> + the 7-day starter kit","Start with the starter kit button above, work the financial survival checklist, and check <span class='plan-link' onclick=\"goCat('support','Keep Your Unemployment While You Retrain — State Programs')\">keep-your-unemployment-while-you-retrain</span> — you may be able to train AND collect."]};
+    if(p.chal&&chalMap[p.chal])steps.push(["Your challenge: "+p.chal,chalMap[p.chal][0]+". "+chalMap[p.chal][1]]);
     if(p.state){
       const ss=document.getElementById("stateSel");if(ss.value!==p.state){ss.value=p.state;state=p.state;renderSpotlight();}
-      steps.push(["Your state: "+p.state,"The state spotlight above now shows free job-seeker groups near you — they cost nothing and meet weekly."]);
+      steps.push(["Your state: "+p.state,"The state spotlight now shows free job-seeker groups near you AND the hidden benefits panel for your state — tuition waivers, training vouchers, and programs most people miss."]);
     }
     out.innerHTML='<div class="plan-card"><div class="plan-hi">Your plan, '+(p.name?p.name.split(" ")[0]:"friend")+'</div><h3>'+steps.length+' steps to start today</h3>'
       +steps.map((s,i)=>'<div class="plan-step"><div class="plan-num">'+(i+1)+'</div><div><b>'+s[0]+'</b><p>'+s[1]+'</p></div></div>').join("")
