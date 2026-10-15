@@ -704,7 +704,7 @@ function card(x){
   const pills=PILL[x.p]?`<span class="pill ${PILL[x.p][0]}">${PILL[x.p][1]}</span>`:"";
   const meta=x.m?`<span class="pill meta">${x.m}</span>`:"";
   const fnt=x.fn.slice(0,3).map(f=>`<span class="fn-tag">${f}</span>`).join("");
-  return `<div class="card${x.f?" featured":""}>
+  return `<div class="card${x.f?" featured":""}">
     <button class="cmp${CMP.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Compare side-by-side" title="Compare side-by-side">⇄</button>
     <button class="fav${FAVS.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Save to favorites" title="Save to favorites">${FAVS.has(x.u)?"♥":"♡"}</button>
     <h4><a href="${x.u}" target="_blank" rel="noopener">${x.n}</a></h4>
