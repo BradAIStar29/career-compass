@@ -6,7 +6,7 @@
 <title>Career Compass — A Free Resource Hub for Job Seekers</title>
 <meta name="description" content="A comprehensive free hub for job seekers: 300+ job boards by category, function and state, free AI tools for resumes, cover letters and interviews, networking and speaker groups, inclusive resources, and free career support groups.">
 <meta property="og:title" content="Career Compass — Every Job Board, Tool &amp; Community You Need">
-<meta property="og:description" content="390+ vetted job boards filterable by category, function and state, free AI resume &amp; cover letter tools, networking and speaker groups, inclusive resources, and free career support communities.">
+<meta property="og:description" content="800+ vetted job boards filterable by category, function and state, free AI resume &amp; cover letter tools, networking and speaker groups, inclusive resources, and free career support communities.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -79,6 +79,12 @@ h1 em{font-style:italic;color:#f3cf8a}
 .stat span{font-size:11.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:#93b0d4}
 
 /* ---------- Tab nav ---------- */
+navsearch{padding:11px 0 0}
+.navgrid{display:flex;flex-wrap:wrap;gap:9px 20px;padding:9px 0 12px}
+.ngroup{display:flex;flex-direction:column;gap:5px}
+.ngroup>span{font:700 10px 'Inter',sans-serif;letter-spacing:.13em;text-transform:uppercase;color:rgba(255,255,255,.42)}
+.ngroup>div{display:flex;gap:6px;flex-wrap:wrap}
+.navgrid .tab{padding:6px 12px;font-size:12.5px;border-radius:999px}
 nav{position:sticky;top:0;z-index:60;background:var(--navy-deep);box-shadow:0 2px 14px rgba(11,26,48,.35)}
 .tabbar{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
 .tabbar::-webkit-scrollbar{display:none}
@@ -259,44 +265,61 @@ footer a{color:#c4d4e8}
   <div class="wrap">
     <span class="badge">Free Resource Hub</span>
     <h1>Career Compass — <em>a free resource hub for job seekers</em></h1>
-    <p class="sub">300+ vetted resources for job seekers: job boards by category, function, and state. Free and freemium AI tools for resumes, cover letters, and interviews. Networking and speaker groups. Inclusive resources for job seekers with disabilities, who are neurodivergent or LGBTQ+. And free career support groups so you never search alone.</p>
+    <p class="sub">800+ vetted resources for job seekers: job boards by category, function, and state. Free and freemium AI tools for resumes, cover letters, and interviews. Networking and speaker groups. Inclusive resources for job seekers with disabilities, who are neurodivergent or LGBTQ+. And free career support groups so you never search alone.</p>
     <div class="stats">
-      <div class="stat"><b>780+</b><span>Vetted resources</span></div>
+      <div class="stat"><b>800+</b><span>Vetted resources</span></div>
       <div class="stat"><b>20</b><span>Career functions</span></div>
       <div class="stat"><b>50 + DC</b><span>State coverage</span></div>
-      <div class="stat"><b>12</b><span>Sections</span></div>
+      <div class="stat"><b>13</b><span>Sections</span></div>
     </div>
   </div>
 </div>
 
 <nav>
-  <div class="wrap tabbar" id="tabbar">
-    <button class="tab" data-tab="profile">True North</button>
-    <button class="tab active" data-tab="boards">Job Boards</button>
-    <button class="tab" data-tab="industry">By Industry</button>
-    <button class="tab" data-tab="ai">AI Tools</button>
-    <button class="tab" data-tab="networking">Networking Groups</button>
-    <button class="tab" data-tab="speakers">Speaker Groups</button>
-    <button class="tab" data-tab="disability">Disability &amp; Neurodivergent</button>
-    <button class="tab" data-tab="lgbtq">LGBTQ+</button>
-    <button class="tab" data-tab="support">Free Career Support</button>
-    <button class="tab" data-tab="volunteer">Volunteer &amp; Internships</button>
-    <button class="tab" data-tab="ldp">Leadership Programs</button>
-    <button class="tab" data-tab="staffing">Exec Search &amp; Staffing</button>
-    <button class="tab" data-tab="submit">Suggest a Resource</button>
-    <button class="tab" data-tab="about">About</button>
+  <div class="wrap">
+    <div class="tb-row navsearch">
+      <div class="searchbox">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input id="q" type="text" placeholder="Search all 800+ resources — try 'resume', 'HR', 'veteran'...">
+      </div>
+      <select id="stateSel" aria-label="Filter by state">
+        <option value="">All states (nationwide)</option>
+      </select>
+      <select id="costSel" aria-label="Filter by cost">
+      </select>
+    </div>
+    <div class="navgrid" id="tabbar">
+      <div class="ngroup"><span>Start here</span><div>
+        <button class="tab active" data-tab="profile">True North</button>
+      </div></div>
+      <div class="ngroup"><span>Find jobs</span><div>
+        <button class="tab" data-tab="boards">Job Boards</button>
+        <button class="tab" data-tab="industry">By Industry</button>
+        <button class="tab" data-tab="staffing">Exec Search &amp; Staffing</button>
+      </div></div>
+      <div class="ngroup"><span>Grow</span><div>
+        <button class="tab" data-tab="ai">AI Tools</button>
+        <button class="tab" data-tab="ldp">Leadership Programs</button>
+        <button class="tab" data-tab="volunteer">Volunteer &amp; Internships</button>
+        <button class="tab" data-tab="additional">Additional Resources</button>
+      </div></div>
+      <div class="ngroup"><span>Community</span><div>
+        <button class="tab" data-tab="networking">Networking</button>
+        <button class="tab" data-tab="speakers">Speakers</button>
+        <button class="tab" data-tab="support">Free Career Support</button>
+        <button class="tab" data-tab="disability">Disability &amp; Neurodivergent</button>
+        <button class="tab" data-tab="lgbtq">LGBTQ+</button>
+      </div></div>
+      <div class="ngroup"><span>Help build this</span><div>
+        <button class="tab" data-tab="submit">Suggest a Resource</button>
+        <button class="tab" data-tab="about">About</button>
+      </div></div>
+    </div>
   </div>
 </nav>
 
 <div class="toolbar wrap">
-  <div class="tb-row">
-    <div class="searchbox">
-      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-      <input id="q" type="text" placeholder="Search resources — try 'resume', 'HR', 'veteran'...">
-    </div>
-    <select id="stateSel" aria-label="Filter by state">
-      <option value="">All states (nationwide)</option>
-    </select>
+  <div class="tb-row alt" style="flex-wrap:wrap">
     <select id="costSel" aria-label="Filter by cost">
       <option value="">Any cost</option>
       <option value="free">Free</option>
@@ -316,7 +339,7 @@ footer a{color:#c4d4e8}
 <main class="wrap">
   <div class="spotlight" id="spotlight"></div>
 
-  <section id="profile">
+  <section id="profile" class="active">
     <div class="section-head">
       <div class="kicker">True North</div>
       <h2>Find your True North — a plan built for you</h2>
@@ -361,7 +384,7 @@ footer a{color:#c4d4e8}
     </div>
   </section>
 
-  <section id="boards" class="active">
+  <section id="boards">
     <div class="section-head">
       <div class="kicker">Job Boards</div>
       <h2>Sorted by category, function &amp; state</h2>
@@ -461,6 +484,15 @@ footer a{color:#c4d4e8}
     <div id="staffing-list"></div>
   </section>
 
+  <section id="additional">
+    <div class="section-head">
+      <div class="kicker">Additional Resources</div>
+      <h2>Templates, trackers &amp; guides — everything else that's free</h2>
+      <p>The extras that make a search easier: free resume templates, application trackers, the best career advice on the web, salary negotiation guides, and official government guides.</p>
+    </div>
+    <div id="additional-list"></div>
+  </section>
+
   <section id="submit">
     <div class="section-head">
       <div class="kicker">Community</div>
@@ -476,7 +508,7 @@ footer a{color:#c4d4e8}
         <div class="field"><label for="rsection">Which section? *</label>
           <select id="rsection" name="section" required>
             <option value="">Choose one...</option>
-            <option>Job Boards</option><option>AI Tools</option><option>Networking Groups</option><option>Speaker Groups</option><option>Disability, Neurodivergent &amp; LGBTQ+</option><option>Free Career Support</option><option>Volunteer &amp; Internships</option><option>Executive Search &amp; Staffing</option><option>Other / Not sure</option>
+            <option>Job Boards</option><option>AI Tools</option><option>Networking Groups</option><option>Speaker Groups</option><option>Disability, Neurodivergent &amp; LGBTQ+</option><option>Free Career Support</option><option>Volunteer &amp; Internships</option><option>Executive Search &amp; Staffing</option><option>Additional Resources</option><option>Other / Not sure</option>
           </select>
         </div>
         <div class="field"><label for="rcost">Cost for job seekers</label>
@@ -526,7 +558,7 @@ footer a{color:#c4d4e8}
     <div class="section-head">
       <div class="kicker">About</div>
       <h2>Built for job seekers</h2>
-      <p>Career Compass is a free, carefully organized directory of 390+ vetted job boards, AI tools, and career communities. Nothing here is sponsored — every resource earns its place. A few tips for using it:</p>
+      <p>Career Compass is a free, carefully organized directory of 800+ vetted job boards, AI tools, and career communities. Nothing here is sponsored — every resource earns its place. A few tips for using it:</p>
     </div>
     <div class="tipgrid">
       <div class="tip"><b><span class="n">1</span>Pick 2–3 boards, not 20</b><p>One general board (Indeed or LinkedIn) plus the niche board for your function beats spraying applications everywhere.</p></div>
@@ -1019,13 +1051,25 @@ const IND=[
 {c:"Legal",ic:"industry",note:"Fewer applicants per opening than the mega-boards — make these your second stop after the general boards.",i:[{n:"LawJobs.com",u:"https://www.lawjobs.com",d:"ALM's legal career portal for attorneys, paralegals, and legal tech professionals.",p:"free",m:"Legal roles",fn:"Legal"},{n:"BCG Attorney Search",u:"https://www.bcgsearch.com",d:"Placement platform focused exclusively on lateral law firm partners and associates.",p:"free",m:"Lateral moves",fn:"Legal"},{n:"NALP Career Center",u:"https://www.nalp.org",d:"National Association for Law Placement job bank for law students and clerks.",p:"free",m:"Law students",fn:"Legal"},{n:"ACC Career Center",u:"https://www.acc.com",d:"Association of Corporate Counsel board for in-house counsel and compliance roles.",p:"free",m:"In-house",fn:"Legal"},{n:"ABA",u:"https://www.americanbar.org",d:"World's largest voluntary lawyer association \u2014 practice sections and forums.",p:"free",m:"Association",fn:"Legal"},{n:"Cornell LII",u:"https://www.law.cornell.edu",d:"Free open-access legal research platform with statutory texts and legal guides.",p:"free",m:"Free research",fn:"Legal"}]}
 ];
 const DIS=INC.slice(0,5),LGBT=INC.slice(5);
-const SECTIONS={boards:BOARDS,industry:IND,ai:AI,networking:NET,speakers:SPK,disability:DIS,lgbtq:LGBT,support:SUP,volunteer:VOL,ldp:LDP,staffing:EXEC};
+const ADDL=[
+{c:"Resume & Cover Letter Templates",ic:"file",i:[
+{n:"Microsoft Create Resume Templates",u:"https://create.microsoft.com/en-us/templates",d:"Free, professionally designed Word resume and cover letter templates from Microsoft's official gallery.",p:"free",fn:["General"]},{n:"Canva Resume Templates",u:"https://www.canva.com/resumes/templates/",d:"Hundreds of free designer resume templates with a drag-and-drop editor.",p:"free",fn:["General"]},{n:"Overleaf CV Templates",u:"https://www.overleaf.com/latex/templates/tagged/cv",d:"Free professional LaTeX CV templates \u2014 the standard for research, tech, and academic roles.",p:"free",fn:["General"]},{n:"NovoResume Free Templates",u:"https://novoresume.com/resume-templates",d:"ATS-friendly resume templates with a matching free builder tier.",p:"free",fn:["General"]},{n:"Cultivated Culture Resume Templates",u:"https://cultivatedculture.com/resume-templates/",d:"Free, recruiter-tested templates from career coach Austin Belcak.",p:"free",fn:["General"]}]},
+{c:"Job Search Trackers & Organization",ic:"check",i:[
+{n:"Notion Job Search Templates",u:"https://www.notion.so/templates/category/job-search",d:"Free trackers, application dashboards, and interview-prep templates for Notion.",p:"free",fn:["General"]},{n:"Huntr Job Tracker",u:"https://www.huntr.co",d:"Visual job-search tracker with a browser extension; free tier available.",p:"free",fn:["General"]}]},
+{c:"Best-Practice Career Guides & Blogs",ic:"book",i:[
+{n:"Ask a Manager",u:"https://www.askamanager.org",d:"Alison Green's legendary free Q&A on resumes, interviews, salary, and workplace norms.",p:"free",fn:["General"]},{n:"The Muse Career Advice",u:"https://www.themuse.com/advice",d:"Structured how-to guides for every stage of the job search.",p:"free",fn:["General"]},{n:"Indeed Career Guide",u:"https://www.indeed.com/career-advice",d:"Deep free library of samples, templates, and step-by-step guides.",p:"free",fn:["General"]},{n:"Glassdoor Blog",u:"https://www.glassdoor.com/blog",d:"Job-search strategy, salary, and company-research articles.",p:"free",fn:["General"]},{n:"Big Interview Blog",u:"https://biginterview.com/blog",d:"Free interview-answer frameworks from coach Pamela Skillings.",p:"free",fn:["General"]}]},
+{c:"Salary Negotiation Guides",ic:"dollar",i:[
+{n:"Fearless Salary Negotiation Articles",u:"https://www.joshdoody.com",d:"Josh Doody's free negotiation articles and email scripts (his book is paid, the blog is not).",p:"free",fn:["General"]},{n:"Cultivated Culture Salary Scripts",u:"https://cultivatedculture.com/salary-negotiation/",d:"Free word-for-word negotiation scripts and email templates.",p:"free",fn:["General"]}]},
+{c:"Government & Official Free Guides",ic:"flag",i:[
+{n:"CareerOneStop Resume Guide",u:"https://www.careeronestop.org/Toolkit/Resumes/resume-guide.aspx",d:"The US Dept. of Labor's complete free resume guide with samples and worksheets.",p:"free",fn:["General"]},{n:"USAJOBS Help Center",u:"https://www.usajobs.gov/Help/",d:"Official guides to federal applications \u2014 including the federal resume format.",p:"free",fn:["General"]}]}
+];
+const SECTIONS={boards:BOARDS,industry:IND,ai:AI,networking:NET,speakers:SPK,disability:DIS,lgbtq:LGBT,support:SUP,volunteer:VOL,ldp:LDP,staffing:EXEC,additional:ADDL};
 const FNS=["General","HR & People","Finance","Tech & IT","Sales","Marketing","Creative","Healthcare","Education","Nonprofit","Startup","Executive","Public Sector","Veterans","Students & Grads","50+","Remote","Freelance","Gig & Hourly","Legal"];
 const STATEGROUPS={"Connecticut":[{n:"Westport Library Job Seekers",u:"https://westportlibrary.org/",d:"Library-hosted series with expert coaches, resume reviews, and peer networking.",m:"Monthly \u00b7 Westport"},{n:"St. Timothy Career Ministry",u:"https://www.sttimothywesthartford.com/",d:"Volunteer career ministry in West Hartford with coaching and resume help.",m:"2nd Wed \u00b7 West Hartford"}],"Delaware":[{n:"Job Center @ Delaware Libraries",u:"https://libraries.blogs.delaware.gov/",d:"Library-based job centers with walk-in clinics and resume help statewide.",m:"Walk-in clinics"},{n:"PA CareerLink Delaware County",u:"https://pacareerlinkdelco.org/",d:"Weekly virtual and in-person job clubs near the DE border.",m:"Weekly \u00b7 Virtual"}],"Maine":[{n:"New Ventures Maine",u:"https://newventuresmaine.org/",d:"University of Maine statewide program: free job-search workshops and transition coaching.",m:"Weekly workshops"},{n:"New Mainers Resource Center",u:"https://nmrcmaine.org/",d:"Portland networking groups and career advisement for internationally trained professionals.",m:"Monthly \u00b7 Portland"}],"Maryland":[{n:"Enoch Pratt Job & Career Center",u:"https://www.prattlibrary.org/research/guides/job-seekers-toolkit",d:"Baltimore's premier library career center: clinics, resume help, and networking groups.",m:"Weekly \u00b7 Baltimore"},{n:"Washington County Job Seekers",u:"https://www.washcolibrary.org/job-seekers",d:"Free career ministry and library job-seeker support in Western Maryland.",m:"1st & 3rd Mon"}],"Massachusetts":[{n:"50+ Job Seekers Networking Group",u:"https://50plusjobseekers.org/",d:"Statewide library-collaborative networking group for job seekers 50+, with expert speakers.",m:"1st\u20134th Wed \u00b7 Virtual"},{n:"JVS Boston Career Moves",u:"https://www.jvs-boston.org/",d:"Nonprofit job club with resume feedback, interview rehearsal, and peer networking.",m:"Weekly \u00b7 Boston"}],"New Hampshire":[{n:"WorkReadyNH",u:"https://www.nhes.nh.gov/individuals/workreadynh",d:"Tuition-free statewide program: job-search coaching and soft-skills training.",m:"Weekly cohorts"},{n:"NH WORKS Resource Centers",u:"https://www.nhes.nh.gov/job-seekers",d:"Statewide walk-in and virtual job-search support, resume labs, and networking.",m:"Weekly \u00b7 12 offices"}],"New York":[{n:"Neighbors-Helping-Neighbors USA",u:"https://www.nhnusa.org/",d:"Nationally recognized peer-led job-search support group born in NJ, serving NY and beyond.",m:"Weekly \u00b7 Virtual"},{n:"Westchester Library Career Seminars",u:"https://blog.westchesterlibraries.org/",d:"Six-week structured career-management cohorts run by the Westchester library system.",m:"6-week cohorts"}],"Pennsylvania":[{n:"Phase 4 Learning Center Job Club",u:"https://www.phase4learningcenter.org/",d:"Pittsburgh job club with resume building, networking, and interview prep.",m:"Weekly \u00b7 Pittsburgh"}],"Rhode Island":[{n:"Job Club RI",u:"https://jobclubri.org/",d:"Volunteer job club at West Warwick Public Library: networking, resumes, placement support.",m:"Tue 6:30 PM"}],"Vermont":[{n:"Vermont DOL Job Search Workshops",u:"https://labor.vermont.gov/jobs",d:"State-sponsored virtual workshops on resumes, interviews, and search strategy.",m:"Tue & Thu \u00b7 Virtual"}],"Virginia":[{n:"Career Network Ministry",u:"https://www.careernetworkministry.com/",d:"One of the DC metro's largest free ministries: expert speakers, networking, accountability teams.",m:"Tue 7 PM \u00b7 McLean/Virtual"},{n:"Virginia Virtual Job Club",u:"https://virginiaworks.gov/im-a-job-seeker/virginia-virtual-job-club/",d:"State-sponsored virtual meeting space for peer discussion and workforce strategies.",m:"Bi-weekly \u00b7 Virtual"}],"West Virginia":[{n:"WorkForce West Virginia",u:"https://workforcewv.org/",d:"State career centers hosting group sessions on job matching, interviews, and transitions.",m:"Weekly \u00b7 Statewide"}],"District of Columbia":[{n:"40Plus of Greater Washington",u:"https://www.40plusdc.org/",d:"Volunteer-run nonprofit: free weekly speaker series, seminars, and peer support for experienced professionals.",m:"Mon \u00b7 DC Metro"}],"Alabama":[{n:"Dawson Career Ministry",u:"https://www.dawsonchurch.org/",d:"Birmingham church-based career network offering encouragement, skills, and networking.",m:"Weekly \u00b7 Birmingham"},{n:"Alabama Career Centers",u:"https://workforce.alabama.gov/job-seekers/",d:"State career centers with group coaching, resume clinics, and peer support.",m:"Weekly \u00b7 Statewide"}],"Florida":[{n:"Tampa Bay Job Links",u:"https://gulfcoastjfcs.org/tbjl/",d:"Nonprofit program with free interactive workshops, coaching, and support groups.",m:"Weekly \u00b7 Tampa/Virtual"},{n:"Jobs Partnership of Florida",u:"https://www.jobspartnership.org/",d:"8-week structured cohorts connecting Orlando job seekers with coaches and employers.",m:"8-week cohorts \u00b7 Orlando"},{n:"CareerSource Tampa Bay PNG",u:"https://careersourcetampabay.com/job-seekers/professional-networking-group/",d:"Job club for mid-to-senior professionals with employer leads.",m:"Bi-weekly \u00b7 Tampa"}],"Georgia":[{n:"RUMC Job Networking",u:"https://www.rumc.com/jobnetworking/",d:"35+ year Atlanta-area ministry: workshops, guest speakers, and intensive networking.",m:"2nd & 4th Mon \u00b7 Roswell"},{n:"St. Ann Career Ministry",u:"https://stannyc.org/",d:"North Atlanta volunteer ministry: coaching, mock interviews, and networking.",m:"Tue 7 PM \u00b7 Marietta"}],"Kentucky":[{n:"Central Kentucky Job Club",u:"https://www.ukalumni.net/s/central-kentucky-job-club",d:"Co-sponsored by the UK Alumni Association: proven job-search tools and peer support.",m:"2nd & 4th Tue \u00b7 Lexington"},{n:"KentuckianaWorks",u:"https://www.kentuckianaworks.org/",d:"Louisville workforce center with job clubs, resume labs, and coaching.",m:"Weekly \u00b7 Louisville"}],"North Carolina":[{n:"NCWorks Job Club",u:"https://www.ncworksasheville.com/career-workshops",d:"Career-center job club with practical skills and employer connections.",m:"Wed 1 PM \u00b7 Asheville +"},{n:"St. Matthew Career Ministry",u:"https://stmatthewcatholic.org/",d:"Charlotte ministry with job leads, resume reviews, and networking.",m:"2nd Tue \u00b7 Charlotte"}],"South Carolina":[{n:"SC Works Upstate",u:"https://scworksupstate.com/",d:"State workforce centers with structured workshops and networking.",m:"Weekly \u00b7 Upstate SC"},{n:"Richland Library Job Seekers",u:"https://www.richlandlibrary.com/",d:"Walk-in Wednesday career networking with specialists and peer support.",m:"Walk-in Wed \u00b7 Columbia"}],"Tennessee":[{n:"Brentwood Baptist C3 Network",u:"https://brentwoodbaptist.com/",d:"Nashville career-transition ministry: coaching, resumes, and networking.",m:"1st & 3rd Mon"},{n:"Tennessee Workforce Services",u:"https://www.tn.gov/workforce",d:"Regional networking groups connecting seekers with employers across TN.",m:"Bi-weekly \u00b7 Statewide"}],"Texas":[{n:"Launch Pad Job Club",u:"https://www.launchpadjobclub.org",d:"Woman-led nonprofit: networking, job-search training, and lead sharing.",m:"Fri \u00b7 Austin + Virtual"},{n:"Southlake Focus Group",u:"https://southlakefocusgroup.com",d:"Independent career-transition group since 2001 with employer networking.",m:"Thu AM \u00b7 DFW"},{n:"All Saints Career Ministry",u:"https://www.allsaintsdallas.org/get-involved/career-ministry",d:"Dallas ministry: counsel, resume reviews, and interview coaching.",m:"Twice monthly \u00b7 Dallas"}],"Oklahoma":[{n:"Overcoming Job Transition (OJT)",u:"https://www.ojttulsa.org",d:"Volunteer nonprofit: free resume reviews, interview practice, and networking.",m:"1st & 3rd Tue \u00b7 Tulsa"},{n:"Work Ready Oklahoma",u:"https://www.goodwilltulsa.org/work-ready-oklahoma",d:"Goodwill-run group coaching, workshops, and barrier-reduction support.",m:"Weekly \u00b7 OKC/Tulsa"}],"Arkansas":[{n:"CALS Job Support (Little Rock)",u:"https://cals.org",d:"Library system workshops, resume feedback, and quarterly job fairs.",m:"Monthly \u00b7 Little Rock"}],"Louisiana":[{n:"New Orleans Public Library Job Seekers",u:"https://nolalibrary.org/learn/adult-literacy/job-seekers/",d:"Weekly guided workshops on applications, resumes, and local leads.",m:"Weekly \u00b7 New Orleans"},{n:"Employ BR",u:"https://employbr.com",d:"City-funded career support: group training, resume help, employer matching.",m:"Weekly \u00b7 Baton Rouge"}],"Mississippi":[{n:"Mississippi WIN Job Centers",u:"https://www.mdes.ms.gov/",d:"State-backed job clubs with resume feedback, interview practice, and networking.",m:"Bi-weekly \u00b7 Statewide"}],"New Mexico":[{n:"New Mexico Workforce Connection",u:"https://www.dws.nm.gov",d:"State job-search support network: peer groups, coaching, and application help.",m:"Weekly \u00b7 Statewide"}],"Arizona":[{n:"Career Connectors",u:"https://careerconnectors.org",d:"Premier AZ nonprofit: networking events with employers, resume reviews, coaching.",m:"3x monthly \u00b7 Phoenix metro"},{n:"ARIZONA@WORK",u:"https://www.arizonaatwork.com",d:"Public workforce program with job clubs, skill workshops, and hiring roundtables.",m:"Weekly \u00b7 Statewide"}],"Colorado":[{n:"Andrew Hudson's Jobs List",u:"https://andreahudsonsjobslist.com",d:"Well-known Colorado career portal with free webinars and transition resources.",m:"Monthly webinars"}],"Utah":[{n:"Utah DWS Job Clubs",u:"https://jobs.utah.gov/jobseeker/",d:"State-run virtual job club with strategies, resume polish, and employer connections.",m:"Weekly \u00b7 Virtual"},{n:"LDS Employment Services",u:"https://careers.churchofjesuschrist.org",d:"Open-to-all career centers with self-reliance workshops and job-search groups (any faith welcome).",m:"Weekly \u00b7 Statewide"}],"Nevada":[{n:"EmployNV Virtual Job Club",u:"https://www.employnv.org",d:"Nevada's official virtual job club: guidance, resume feedback, networking.",m:"Wed 10 AM PT \u00b7 Virtual"}],"Idaho":[{n:"Idaho Dept. of Labor Job Clubs",u:"https://labor.idaho.gov",d:"State-run peer groups with resume critique, interview practice, and leads.",m:"Weekly \u00b7 Statewide"}],"Montana":[{n:"Montana Job Service Job Club",u:"https://montanaworkforce.org",d:"Community job club with peer support and transition guidance.",m:"Bi-weekly \u00b7 Statewide"}],"Wyoming":[{n:"Wyoming Workforce Services",u:"https://dws.wyo.gov",d:"State workforce center groups: strategy sharing, resumes, interview practice.",m:"Bi-weekly \u00b7 Statewide"}],"Washington":[{n:"St. Louise Career Ministry",u:"https://stlouise.org",d:"Bellevue volunteer career group: networking, resume help, coaching.",m:"Bi-weekly \u00b7 Bellevue"}],"Oregon":[{n:"WorkSource Oregon Job Clubs",u:"https://worksourceoregon.org",d:"Structured local support groups with career coaches and lead sharing.",m:"Weekly \u00b7 Statewide"},{n:"Beaverton Library Job Club",u:"https://www.beavertonlibrary.org",d:"Library-hosted job club with computer-lab help and resume reviews.",m:"Monthly \u00b7 Beaverton"}],"California":[{n:"Silicon Valley Job Hunters Network",u:"https://www.svjhn.org",d:"Long-running Bay Area volunteer job club: speakers, networking, peer support.",m:"Tue & Thu \u00b7 Sunnyvale"},{n:"Saint Joseph Career Ministry",u:"https://saintjosephmsj.org",d:"East Bay parish ministry: resume feedback, strategy, and encouragement.",m:"Bi-weekly \u00b7 Fremont"},{n:"JFS San Diego Employment Services",u:"https://www.jfssd.org",d:"Free career coaching, support groups, and readiness workshops.",m:"Weekly \u00b7 San Diego"}],"Alaska":[{n:"Alaska Job Center Network",u:"https://jobs.alaska.gov",d:"State job club: local leads, resume guidance, and peer tips.",m:"Weekly \u00b7 Statewide"}],"Hawaii":[{n:"American Job Center Hawaii",u:"https://www.americanjobcenterhawaii.org",d:"Oahu public employment center: group support, resume reviews, interview prep.",m:"Weekly \u00b7 Honolulu"},{n:"Hawaii State Libraries Career Support",u:"https://www.librarieshawaii.org",d:"Statewide library career resources, resume help, and job-search workshops.",m:"Monthly \u00b7 All islands"}],"New Jersey":[{n:"Professional Support Group of Morris County",u:"https://www.mynetworkingcentral.com/networking-groups/professional-services-group-morris-county/",d:"Free weekly group with guest speakers, peer accountability, and job leads. Wed 9:30 AM ET on Zoom.",m:"Wed 9:30 AM \u00b7 Zoom"},{n:"PSG of Central New Jersey",u:"https://psgcnj.biz/",d:"Monday-morning Zoom group with speakers and peer support.",m:"Mon 10:30 AM \u00b7 Zoom"},{n:"PSG of Mercer County",u:"https://www.psgofmercercounty.org/",d:"Friday-morning group at Princeton Public Library.",m:"Fri 9:45 AM \u00b7 Princeton"},{n:"Job Seekers of Montclair",u:"https://www.jobseekersofmontclair.org/",d:"Est. 1980: workshops, pitch practice, resume reviews.",m:"Wed 7:30 PM \u00b7 Hybrid"},{n:"The Breakfast Club of NJ",u:"https://thebreakfastclubnj.com/",d:"3,000+ member peer network with keynote presentations.",m:"2nd Sat 8 AM \u00b7 Zoom"},{n:"My Networking Central",u:"https://www.mynetworkingcentral.com/",d:"Directory and master calendar of every NJ job club.",m:"Virtual"}],"Ohio":[{n:"Job Search Focus Group (JSFG)",u:"https://jsfg.com/",d:"Est. 1992 \u2014 one of the oldest volunteer job-search groups in the U.S.; 13,000+ helped. Weekly speakers, employer connections, coaching.",m:"Mon 9 AM \u00b7 Cincinnati"},{n:"Hudson Job Search",u:"https://hudsonjobsearch.org/",d:"Outplacement-style guidance, educational meetings, and 1-on-1 advisor matching for Northeast Ohio.",m:"1st & 3rd Mon 7 PM \u00b7 Hudson"}],"Michigan":[{n:"Crossroads of Michigan Job Club",u:"https://crossroadsofmichigan.org/",d:"Weekly lunch job club with speakers, application help, and resume building for Metro Detroit.",m:"Weekly \u00b7 Detroit"},{n:"Gesher Human Services",u:"https://www.geshermi.org/careers-employment/",d:"Non-sectarian nonprofit: career planning, peer groups, resume critique, and computer-lab access.",m:"Weekly \u00b7 Southfield"}],"Indiana":[{n:"Mary Rigg Job Club",u:"https://www.maryrigg.org/what-we-do/employment-enrichment-services/job-club/",d:"Drop-in community job club: peer networking, resumes, and direct hiring-employer connections.",m:"Mon 10 AM\u20131 PM \u00b7 Indianapolis"},{n:"WorkOne Indy Coffee & Connections",u:"https://employindy.org/workoneindy/",d:"Peer networking, employer spotlights, and job-search coaching.",m:"Tue \u00b7 Indianapolis"}],"Illinois":[{n:"Holy Archangels Job & Networking Ministry",u:"https://holyarchangelsparish.org/employers",d:"Since 2003 \u2014 20,000+ served. Resume critiques, interview prep, expert speakers, and a daily job-lead email list.",m:"2nd & 4th Mon \u00b7 Hoffman Estates"}],"Wisconsin":[{n:"Urban League of Greater Madison Job Club",u:"https://ulgm.org/events/job-club-6/",d:"1-on-1 resume support, interview practice, and employer connections.",m:"Fri 11 AM \u00b7 Madison"},{n:"The Joseph Project (Milwaukee)",u:"https://www.josephprojectwi.org/milwaukee",d:"Faith-based job-connection ministry: interview coaching, life skills, transportation, and direct jobs.",m:"Wed \u00b7 Milwaukee"}],"Minnesota":[{n:"MN Crossroads Career Network",u:"https://www.mncrossroads.com/",d:"Twin Cities network: expert speakers, peer networking, volunteer coaching, 8-week workshops.",m:"1st & 3rd Thu \u00b7 Eden Prairie"},{n:"CareerForce MN",u:"https://careerforce.mn.gov/",d:"Statewide career centers with library job clubs, resume guidance, and digital-skills help.",m:"Weekly \u00b7 Statewide"}],"Iowa":[{n:"IowaWORKS Centers",u:"https://www.iowaworkforcedevelopment.gov",d:"Statewide centers: resume workshops, peer career counseling, and job-seeker support.",m:"Statewide"}],"Missouri":[{n:"Job Seekers' Garden Club of St. Louis",u:"https://jobseekersgardenclubofstlouis.net/",d:"Peer-networking group sharing leads and strategies across the St. Louis metro.",m:"Bi-weekly \u00b7 St. Louis"},{n:"Holy Trinity Career Transition Ministry",u:"https://www.careerusa.org/jobs/169-groups/828-kansas-city-area-job-clubs.html",d:"KC bi-state ministry open to all faiths: outplacement tools, resume reviews, speakers. (Serves MO & KS.)",m:"1st & 3rd Mon \u00b7 Lenexa, KS"}],"Kansas":[{n:"Church of the Resurrection Job Seekers",u:"https://cor.org/",d:"Volunteer-led group: strategy discussions, networking, and moral support. Hybrid options.",m:"Fri 7:30 AM \u00b7 Leawood"},{n:"Holy Trinity Career Transition Ministry",u:"https://www.careerusa.org/jobs/169-groups/828-kansas-city-area-job-clubs.html",d:"KC-area ministry open to all faiths: resume reviews, networking coaching, peer support.",m:"1st & 3rd Mon \u00b7 KC Metro"}],"Nebraska":[{n:"Goodwill Southeast Nebraska Job Club",u:"https://lincolngoodwill.org/",d:"Peer support, job-readiness skills, resume help, and employer connections.",m:"Mon \u00b7 Lincoln"}],"North Dakota":[{n:"Job Service North Dakota",u:"https://www.jobsnd.com",d:"Statewide job-seeker assistance, resume workshops, and career consultation.",m:"Fargo \u00b7 Bismarck \u00b7 GF"}],"South Dakota":[{n:"SD DLR Career Centers",u:"https://dlr.sd.gov/localoffices/default.aspx",d:"Free employment coaching, job-search tools, and computer access.",m:"Sioux Falls \u00b7 Rapid City"}]};
 const STATES=["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 
 /* =============== STATE (filters) =============== */
-let activeTab="boards", q="", fns=new Set(), cost="", state="";
+let activeTab="profile", q="", fns=new Set(), cost="", state="";
 
 /* =============== RENDER =============== */
 const PILL={free:["free","Free"],freemium:["freemium","Freemium"],paid:["paid","Paid"]};
@@ -1307,7 +1351,10 @@ sf.addEventListener("submit",async e=>{
   const fd=new FormData(sf);
   if(fd.get("company-field"))return;
   try{
-    const r=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(fd).toString()});
+    const onNetlify=location.hostname.includes("netlify.app");
+    const r=onNetlify
+      ?await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(fd).toString()})
+      :await fetch("/api/suggest",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(Object.fromEntries(fd))});
     if(!r.ok)throw new Error();
     msg.className="form-msg ok";msg.textContent="Thank you! Your suggestion was sent — every submission is reviewed before it's added.";
     sf.reset();
@@ -1319,7 +1366,7 @@ const aiFab=document.getElementById("aiFab"),aiPanel=document.getElementById("ai
 let aiLog=[];
 aiFab.onclick=()=>{aiPanel.classList.toggle("open");
   if(aiPanel.classList.contains("open")){
-    if(!aiLog.length)addAi("bot","Hi, I'm Compass — the free AI guide for this site. Ask me anything about your job search, or which of the 11 tabs and 780+ resources fits your situation. Start with the True North tab to get a plan built for you.");
+    if(!aiLog.length)addAi("bot","Hi, I'm Compass — the free AI guide for this site. Ask me anything about your job search, or which of the 13 tabs and 800+ resources fits your situation. Start with the True North tab to get a plan built for you.");
     aiInput.focus();
   }};
 document.getElementById("aiClose").onclick=()=>aiPanel.classList.remove("open");
@@ -1332,7 +1379,7 @@ aiForm.onsubmit=async e=>{
   const typing=addAi("bot","Thinking...");typing.classList.add("ai-typing");
   aiLog.push({role:"user",content:t});
   try{
-    const CHAT_URL=location.hostname.includes("netlify.app")?"/.netlify/functions/chat":"/api/chat";const r=await fetch(CHAT_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:aiLog.slice(-10)})});
+    const r=await fetch("/.netlify/functions/chat",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({messages:aiLog.slice(-10)})});
     if(!r.ok)throw new Error();
     const d=await r.json();
     typing.remove();
