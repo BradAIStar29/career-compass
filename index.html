@@ -928,7 +928,6 @@ let deb;document.getElementById("q").oninput=e=>{clearTimeout(deb);deb=setTimeou
 function renderGlobal(){
   const gs=document.getElementById("gsearch");
   if(q.length<2){gs.classList.remove("show");gs.innerHTML="";return;}
-  const TABNAMES={boards:"Job Boards",industry:"By Industry",ai:"AI Tools",networking:"Networking Groups",speakers:"Speaker Groups",disability:"Disability & Neurodivergent",lgbtq:"LGBTQ+",support:"Free Career Support",volunteer:"Volunteer & Internships",ldp:"Leadership Programs",staffing:"Exec Search & Staffing"};
   let out=[];
   Object.keys(SECTIONS).forEach(tk=>{SECTIONS[tk].forEach((g,gi)=>{g.i.forEach((it,ix)=>{if(out.length<40&&(it.n+" "+it.d+" "+g.c).toLowerCase().includes(q))out.push({tk,gi,ix});});});});
   gs.innerHTML=out.length
@@ -960,6 +959,7 @@ updFavBtn();
 document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;e.preventDefault();e.stopPropagation();const u=b.dataset.u;if(FAVS.has(u))FAVS.delete(u);else FAVS.add(u);localStorage.setItem("ccFavs",JSON.stringify([...FAVS]));b.classList.toggle("on",FAVS.has(u));b.textContent=FAVS.has(u)?"♥":"♡";updFavBtn();});
 // ---- URL index for compare/recent ----
 Object.keys(SECTIONS).forEach(tk=>SECTIONS[tk].forEach(g=>g.i.forEach(it=>{if(it&&it.u)URLIDX[it.u]={it,tk,cat:g.c};})));
+const TABNAMES={boards:"Job Boards",industry:"By Industry",ai:"AI Tools",networking:"Networking Groups",speakers:"Speaker Groups",disability:"Disability & Neurodivergent",lgbtq:"LGBTQ+",support:"Free Career Support",volunteer:"Volunteer & Internships",ldp:"Leadership Programs",staffing:"Exec Search & Staffing",additional:"Additional Resources",profile:"True North",submit:"Suggest a Resource",about:"About"};
 // ---- toast ----
 function toast(m){const t=document.createElement("div");t.className="cc-toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.classList.add("show"),10);setTimeout(()=>{t.classList.remove("show");setTimeout(()=>t.remove(),400)},2600);}
 // ---- modal system ----
