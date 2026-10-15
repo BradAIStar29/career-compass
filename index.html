@@ -193,6 +193,28 @@ select:focus{border-color:var(--gold)}
 .fav:hover{color:#e0574a}
 .fav.on{color:#e0574a}
 .plan-actions{display:flex;gap:10px;flex-wrap:wrap}
+.cmp{position:absolute;top:9px;right:40px;background:none;border:none;font-size:15px;line-height:1;color:#c3cad6;cursor:pointer;padding:4px;z-index:2;transition:color .13s}
+.cmp:hover{color:#1a5fb4}
+.cmp.on{color:#1a5fb4;font-weight:700}
+.kbd-hint{position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:11px;font-weight:700;color:#8a93a3;border:1px solid #5e6e85;border-radius:5px;padding:1px 7px;background:rgba(255,255,255,.08);pointer-events:none}
+.ccm-back{position:fixed;inset:0;background:rgba(6,15,30,.62);z-index:150}
+.ccm-panel{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);width:min(940px,94vw);max-height:86vh;overflow:auto;background:var(--card,#fff);border-radius:16px;padding:24px 26px;z-index:151;box-shadow:0 24px 64px rgba(4,12,26,.5)}
+.ccm-close{position:absolute;top:12px;right:14px;background:none;border:none;font-size:18px;color:#8a93a3;cursor:pointer}
+.ccm-close:hover{color:#e0574a}
+.ccm-scroll{overflow:auto;max-height:62vh}
+.ccm-table{border-collapse:collapse;width:100%;font-size:13.5px}
+.ccm-table th{position:sticky;left:0;text-align:left;white-space:nowrap;color:#8a93a3;font-weight:600;padding:10px 14px 10px 0;border-bottom:1px solid rgba(120,140,170,.25);vertical-align:top;background:inherit}
+.ccm-table td{padding:10px 14px;border-bottom:1px solid rgba(120,140,170,.25);vertical-align:top;min-width:180px;max-width:260px}
+.cmp-x{background:none;border:1px solid rgba(120,140,170,.4);border-radius:6px;color:#8a93a3;cursor:pointer;font-size:11px;padding:1px 6px;margin-left:8px}
+.cmp-x:hover{color:#e0574a;border-color:#e0574a}
+.rday{margin-bottom:18px}
+.rday-h{font-weight:700;font-size:13px;color:#1a5fb4;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #e8c56a}
+.ritem{padding:5px 0;font-size:13px}
+.ritem a{color:inherit}
+.ritem a b{color:#1a5fb4}
+.rdesc{color:#8a93a3;font-size:12px}
+.cc-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#0f2540;color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;transition:.3s;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.25);max-width:90vw;text-align:center}
+.cc-toast.show{opacity:1;transform:translateX(-50%)}
 .clearbtn:hover{text-decoration:underline}
 
 /* ---------- Sections ---------- */
@@ -340,6 +362,8 @@ footer a{color:#c4d4e8}
       <span class="count" id="count"></span>
       <button class="clearbtn" id="newBtn" title="Resources added in the last 7 days">New this week</button>
       <button class="clearbtn" id="savedBtn" title="Your saved favorites">Saved (0)</button>
+      <button class="clearbtn" id="cmpBtn" title="Compare your picks side-by-side">Compare (0)</button>
+      <button class="clearbtn" id="recentBtn" title="Browse everything we have added, newest first">Recently added</button>
       <button class="clearbtn" id="clearBtn">Clear filters</button>
     </div>
   </div>
@@ -824,6 +848,7 @@ const STATES=["Alabama","Alaska","Arizona","Arkansas","California","Colorado","C
 
 /* =============== STATE (filters) =============== */
 let activeTab="profile", q="", fns=new Set(), cost="", state="", newOnly=false, savedOnly=false;
+let CMP=new Set();const URLIDX={};
 const FAVS=new Set(JSON.parse(localStorage.getItem("ccFavs")||"[]"));
 const isFresh=d=>{if(!d)return false;const t=new Date(d).getTime();return t>0&&Date.now()-t<7*864e5;};
 
@@ -842,6 +867,7 @@ function card(x){
   const meta=x.m?`<span class="pill meta">${x.m}</span>`:"";
   const fnt=x.fn.slice(0,3).map(f=>`<span class="fn-tag">${f}</span>`).join("");
   return `<div class="card${x.f?" featured":""}>
+    <button class="cmp${CMP.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Compare side-by-side" title="Compare side-by-side">⇄</button>
     <button class="fav${FAVS.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Save to favorites" title="Save to favorites">${FAVS.has(x.u)?"♥":"♡"}</button>
     <h4><a href="${x.u}" target="_blank" rel="noopener">${x.n}</a></h4>
     <p>${x.d}</p>
@@ -956,7 +982,7 @@ window.clearAll=clearAll;
     }
     out.innerHTML='<div class="plan-card"><div class="plan-hi">Your plan, '+(p.name?p.name.split(" ")[0]:"friend")+'</div><h3>'+steps.length+' steps to start today</h3>'
       +steps.map((s,i)=>'<div class="plan-step"><div class="plan-num">'+(i+1)+'</div><div><b>'+s[0]+'</b><p>'+s[1]+'</p></div></div>').join("")
-      +'<div class="plan-actions"><button class="plan-ai" id="pf-ai">Ask Compass for a deeper plan →</button><button class="plan-ai" id="pf-print" title="Print or save as PDF">Print / Save as PDF</button></div></div>';
+      +'<div class="plan-actions"><button class="plan-ai" id="pf-ai">Ask Compass for a deeper plan →</button><button class="plan-ai" id="pf-print" title="Print or save as PDF">Print / Save as PDF</button><button class="plan-ai" id="pf-share" title="Copy a link that rebuilds this exact plan">Share this plan</button></div></div>';
     out.style.display="block";
     document.getElementById("pf-ai").onclick=()=>{
       const bits=[];
@@ -981,8 +1007,24 @@ window.clearAll=clearAll;
       w.document.close();
       setTimeout(()=>{w.focus();w.print();},350);
     };
+    document.getElementById("pf-share").onclick=()=>{
+      const s=btoa(unescape(encodeURIComponent(JSON.stringify(p))));
+      const url=location.origin+location.pathname+"#p="+s;
+      const done=()=>toast("Plan link copied — share it anywhere. Anyone who opens it gets this same plan.");
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done).catch(()=>prompt("Copy this plan link:",url));}
+      else prompt("Copy this plan link:",url);
+    };
   }
   document.getElementById("pf-save").onclick=saveProfile;
+// ---- load shared plan from URL (#p=...) ----
+try{
+  const pm=location.hash.match(/#p=([A-Za-z0-9+/=]+)/);
+  if(pm){const sp=JSON.parse(decodeURIComponent(escape(atob(pm[1]))));
+    for(const k in els){if(sp[k]!==undefined){const el=document.getElementById(els[k]);if(el)el.value=sp[k]||"";}}
+    renderPlan(sp);
+    toast("Loaded a shared plan from the link.");
+  }
+}catch(e){}
   try{
     const saved=JSON.parse(localStorage.getItem("cc_profile")||"null");
     if(saved){
@@ -1077,7 +1119,50 @@ const updFavBtn=()=>{savedBtn.textContent="Saved ("+FAVS.size+")";savedBtn.class
 newBtn.onclick=()=>{newOnly=!newOnly;updFavBtn();renderSection();};
 savedBtn.onclick=()=>{savedOnly=!savedOnly;updFavBtn();renderSection();};
 updFavBtn();
-document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;e.preventDefault();e.stopPropagation();const u=b.dataset.u;if(FAVS.has(u))FAVS.delete(u);else FAVS.add(u);localStorage.setItem("ccFavs",JSON.stringify([...FAVS]));b.classList.toggle("on",FAVS.has(u));b.textContent=FAVS.has(u)?"\u2665":"\u2661";updFavBtn();});
+document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;e.preventDefault();e.stopPropagation();const u=b.dataset.u;if(FAVS.has(u))FAVS.delete(u);else FAVS.add(u);localStorage.setItem("ccFavs",JSON.stringify([...FAVS]));b.classList.toggle("on",FAVS.has(u));b.textContent=FAVS.has(u)?"♥":"♡";updFavBtn();});
+// ---- URL index for compare/recent ----
+Object.keys(SECTIONS).forEach(tk=>SECTIONS[tk].forEach(g=>g.i.forEach(it=>{if(it&&it.u)URLIDX[it.u]={it,tk,cat:g.c};})));
+// ---- toast ----
+function toast(m){const t=document.createElement("div");t.className="cc-toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.classList.add("show"),10);setTimeout(()=>{t.classList.remove("show");setTimeout(()=>t.remove(),400)},2600);}
+// ---- modal system ----
+let modalEl=null;
+function renderModal(html){closeModal();modalEl=document.createElement("div");modalEl.id="ccModal";modalEl.innerHTML='<div class="ccm-back"></div><div class="ccm-panel"><button class="ccm-close" title="Close (Esc)">✕</button>'+html+'</div>';document.body.appendChild(modalEl);document.body.style.overflow="hidden";modalEl.querySelector(".ccm-close").onclick=closeModal;modalEl.querySelector(".ccm-back").onclick=closeModal;}
+function closeModal(){if(modalEl){modalEl.remove();modalEl=null;}document.body.style.overflow="";}
+window.closeModal=closeModal;
+// ---- compare ----
+const cmpBtn=document.getElementById("cmpBtn"),recentBtn=document.getElementById("recentBtn");
+const updCmpBtn=()=>{cmpBtn.textContent="Compare ("+CMP.size+")";};
+updCmpBtn();
+cmpBtn.onclick=()=>{if(CMP.size<2){toast("Add at least 2 resources to compare — click ⇄ on any cards.");return}renderModal(buildCmpHTML());};
+document.addEventListener("click",e=>{const b=e.target.closest(".cmp");if(!b)return;e.preventDefault();e.stopPropagation();const u=b.dataset.u;
+  if(CMP.has(u))CMP.delete(u);else{if(CMP.size>=4){toast("Compare holds up to 4 — remove one first.");return}CMP.add(u)}
+  b.classList.toggle("on",CMP.has(u));b.textContent=CMP.has(u)?"✕":"⇄";updCmpBtn();});
+document.addEventListener("click",e=>{const b=e.target.closest(".cmp-x");if(!b)return;e.preventDefault();CMP.delete(b.dataset.u);updCmpBtn();if(CMP.size<2){closeModal();return}renderModal(buildCmpHTML());});
+function buildCmpHTML(){
+  const items=[...CMP].map(u=>URLIDX[u]).filter(Boolean);
+  const cost=it=>PILL[it.p]?`<span class="pill ${PILL[it.p][0]}">${PILL[it.p][1]}</span>`:`<span class="pill">${it.p||"—"}</span>`;
+  const rows=[["Resource",x=>`<b>${x.it.n}</b>`],["Tab",x=>TABNAMES[x.tk]||x.tk],["Category",x=>x.cat],["Cost",x=>cost(x.it)],["Best for (career functions)",x=>(x.it.fn||[]).filter(v=>typeof v==="string").map(v=>`<span class="fn-tag">${v}</span>`).join(" ")||"—"],["Details",x=>x.it.m||"—"],["Added",x=>x.it.add||"—"],["Open",x=>`<a href="${x.it.u}" target="_blank" rel="noopener">Visit ↗</a> <button class="cmp-x" data-u="${x.it.u}" title="Remove from compare">✕</button>`],["Description",x=>`<span style="font-size:12.5px">${x.it.d}</span>`]];
+  return `<h3 style="margin:0 0 4px">Compare resources</h3><p style="margin:0 0 14px;color:#8a93a3;font-size:13px">${items.length} side-by-side — click ✕ on any column to remove it.</p><div class="ccm-scroll"><table class="ccm-table"><tbody>`
+    +rows.map(r=>`<tr><th>${r[0]}</th>`+items.map(x=>`<td>${r[1](x)}</td>`).join("")+"</tr>").join("")+"</tbody></table></div>";
+}
+// ---- recently added ----
+function recentHTML(){
+  const groups={};
+  Object.keys(SECTIONS).forEach(tk=>SECTIONS[tk].forEach(g=>g.i.forEach(it=>{if(it&&it.add){(groups[it.add]=groups[it.add]||[]).push({it,tk});}})));
+  const days=Object.keys(groups).sort().reverse();
+  return `<h3 style="margin:0 0 4px">Recently added</h3><p style="margin:0 0 14px;color:#8a93a3;font-size:13px">A living archive of every resource we add, newest first — ${days.reduce((a,d)=>a+groups[d].length,0)} items so far.</p><div class="ccm-scroll">`
+    +days.map(d=>{const dt=new Date(d+"T12:00:00");const label=isNaN(dt)?d:dt.toLocaleDateString(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"});
+      return `<div class="rday"><div class="rday-h">${label} · ${groups[d].length} added</div>`+groups[d].map(x=>`<div class="ritem"><a href="${x.it.u}" target="_blank" rel="noopener"><b>${x.it.n}</b></a> <span class="fn-tag">${TABNAMES[x.tk]||x.tk}</span><span class="rdesc">${x.it.d.slice(0,120)}${x.it.d.length>120?"…":""}</span></div>`).join("")+"</div>";}).join("")
+    +"</div><p style=\"margin:14px 0 0\"><button class=\"clearbtn\" onclick=\"closeModal()\">Close</button></p>";
+}
+recentBtn.onclick=()=>renderModal(recentHTML());
+// ---- Esc: clear search, close modal ----
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;
+  if(modalEl){closeModal();return}
+  const gs=document.getElementById("gsearch");if(gs&&gs.style.display!=="none"){gs.style.display="none";return}
+  const q1=document.getElementById("q");if(q1&&q1.value){q1.value="";q1.dispatchEvent(new Event("input"))}});
+// ---- kbd hint badge ----
+try{const qb=document.getElementById("q");qb.parentElement.style.position="relative";qb.setAttribute("title","Press / to search");const kh=document.createElement("span");kh.id="kbdHint";kh.className="kbd-hint";kh.textContent="/";qb.parentElement.appendChild(kh);}catch(e){}
 const catSel=document.getElementById("catSel");
 function fillCatSel(){
   catSel.innerHTML='<option value="">Jump to category…</option>';
