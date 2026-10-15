@@ -302,6 +302,11 @@ section.active{display:block}
 .curl-copy{flex:none;font:600 11px/1 inherit;background:transparent;border:1px solid var(--line);border-radius:99px;padding:5px 10px;color:var(--ink-soft,#7a8496);cursor:pointer;transition:border-color .15s,color .15s}
 .curl-copy:hover{border-color:var(--gold);color:var(--navy)}
 .curl-copy.ok{border-color:#2e9e5b;color:#2e9e5b}
+.vrf{flex:none;font:700 10.5px/1;color:#2e9e5b;border:1px solid #bfe3cd;background:#f0f9f3;border-radius:99px;padding:4px 8px;letter-spacing:.02em}
+[data-theme="dark"] .vrf{color:#5ec585;background:#12281c;border-color:#1e4230}
+.promise-note{font-size:12px;color:var(--ink-soft,#4b5468);margin-top:6px;letter-spacing:.01em}
+.promise-note b{color:var(--navy)}
+[data-theme="dark"] .promise-note b{color:var(--gold)}
 .card.featured{border:1.5px solid var(--gold);background:linear-gradient(180deg,#fdf8ee 0%,#fff 55%)}
 .card.featured::before{opacity:1;background:var(--gold)}
 .card h4{font-size:15.5px;font-weight:800;line-height:1.35}
@@ -490,6 +495,7 @@ html{scroll-padding-top:132px}
       <div class="stat"><b>13</b><span>Sections</span></div>
     </div>
     <div class="verify-note" title="Every resource URL is curl-verified before it goes live. Dead links can be reported with the Report Issue button.">✓ Every link verified live &nbsp;·&nbsp; last full sweep: October 15, 2026</div>
+    <div class="promise-note"><b>No account. No email wall. Nothing to sign up for.</b> Every resource is free to access and machine-checked — this site costs you nothing and takes nothing.</div>
     <div class="kit-row"><button id="kitBtn" class="kit-btn" type="button">🆘 Just lost your job? Start the free 7-day plan</button></div>
   </div>
 </div>
@@ -906,6 +912,9 @@ function matches(x){
   return true;
 }
 function hl(s){if(!q)return s;try{const terms=q.split(/\s+/).filter(t=>t.length>1).map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));if(!terms.length)return s;const re=new RegExp("("+terms.join("|")+")","gi");return String(s).replace(re,"<mark class=\"hl\">$1</mark>");}catch(_){return s;}}
+const LASTSWEEP="October 15, 2026",LSHORT="Oct 15";
+const vnEl=document.querySelector(".verify-note");
+if(vnEl)vnEl.innerHTML="✓ Every link verified live &nbsp;·&nbsp; last full sweep: "+LASTSWEEP;
 function card(x){
   const pills=PILL[x.p]?`<span class="pill ${PILL[x.p][0]}">${PILL[x.p][1]}</span>`:"";
   const meta=x.m?`<span class="pill meta">${x.m}</span>`:"";
@@ -917,7 +926,7 @@ function card(x){
     <h4><a href="${x.u}" target="_blank" rel="noopener">${hl(x.n)}</a></h4>
     <p>${hl(x.d)}</p>
     <div class="tags">${isFresh(x.add)?'<span class="pill nw">New</span>':""}${x.f?'<span class="pill hl">Top Pick</span>':""}${x.dl?'<span class="pill dl">Downloadable</span>':""}${x.lvl?'<span class="pill lvl">'+x.lvl+'</span>':""}${pills}${meta}${fnt}</div>
-    ${/^https?:/.test(x.u)?`<div class="curl" title="${x.u}"><span class="curl-txt">${x.u.replace(/^https?:\/\//,"").replace(/\/$/,"")}</span><button class="curl-copy" type="button" data-u="${x.u}" title="Copy the link" aria-label="Copy the link">Copy link</button></div>`:""}
+    ${/^https?:/.test(x.u)?`<div class="curl" title="${x.u}"><span class="curl-txt">${x.u.replace(/^https?:\/\//,"").replace(/\/$/,"")}</span><span class="vrf" title="Link verified in our ${LASTSWEEP} sweep">✓ ${LSHORT}</span><button class="curl-copy" type="button" data-u="${x.u}" title="Copy the link" aria-label="Copy the link">Copy link</button></div>`:""}
   </div>`;
 }
 function renderSection(){
@@ -1218,7 +1227,7 @@ document.addEventListener("click",e=>{const b=e.target.closest(".info");if(!b)re
   const cost=it.p?it.p.charAt(0).toUpperCase()+it.p.slice(1):"Free";
   const tags=(it.fn||[]).map(t=>'<span class="fn-tag">'+t+'</span>').join(" ");
   const pills=(it.f?'<span class="pill hl">Top Pick</span>':"")+(it.dl?'<span class="pill dl">Downloadable</span>':"")+(it.lvl?'<span class="pill lvl">'+it.lvl+'</span>':"")+(it.m?'<span class="pill meta">'+it.m+'</span>':"");
-  renderModal('<h3 class="ccm-title">'+it.n+'</h3><p class="ccm-crumb">'+(TABLABELS[x.tk]||x.tk)+' &middot; '+x.cat+'</p><div class="tags">'+pills+'<span class="fn-tag">'+cost+'</span>'+tags+'</div><p style="margin:14px 0">'+it.d+'</p><div class="curl" title="'+it.u+'"><span class="curl-txt">'+it.u.replace(/^https?:\/\//,"")+'</span><button class="curl-copy" type="button" data-u="'+it.u+'" title="Copy the link" aria-label="Copy the link">Copy link</button></div><p class="ccm-meta">Added to Career Compass: '+(it.add||"earlier")+'. Every link on the site was re-verified in the October 15, 2026 sweep.</p><div style="margin-top:16px"><a class="ccm-open" href="'+it.u+'" target="_blank" rel="noopener">Open resource ↗</a></div>');
+  renderModal('<h3 class="ccm-title">'+it.n+'</h3><p class="ccm-crumb">'+(TABLABELS[x.tk]||x.tk)+' &middot; '+x.cat+'</p><div class="tags">'+pills+'<span class="fn-tag">'+cost+'</span>'+tags+'</div><p style="margin:14px 0">'+it.d+'</p><div class="curl" title="'+it.u+'"><span class="curl-txt">'+it.u.replace(/^https?:\/\//,"")+'</span><button class="curl-copy" type="button" data-u="'+it.u+'" title="Copy the link" aria-label="Copy the link">Copy link</button></div><p class="ccm-meta">Added to Career Compass: '+(it.add||"earlier")+'. Every link on the site was re-verified in the '+LASTSWEEP+' sweep.</p><div style="margin-top:16px"><a class="ccm-open" href="'+it.u+'" target="_blank" rel="noopener">Open resource ↗</a></div>');
 });
 // ---- URL index for compare/recent ----
 Object.keys(SECTIONS).forEach(tk=>SECTIONS[tk].forEach(g=>g.i.forEach(it=>{if(it&&it.u)URLIDX[it.u]={it,tk,cat:g.c};})));
