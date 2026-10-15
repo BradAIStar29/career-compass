@@ -135,7 +135,7 @@ nav{position:sticky;top:0;z-index:60;background:var(--navy-deep);box-shadow:0 2p
 @media(min-width:900px){.tab{padding-left:20px;padding-right:20px;font-size:14.5px}}
 
 /* ---------- Filter toolbar ---------- */
-.toolbar{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);margin:-30px auto 30px;max-width:1240px;padding:16px 20px 14px;position:relative;z-index:20}
+.toolbar{background:var(--card);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);margin:20px auto 30px;max-width:1240px;padding:16px 20px 14px;position:relative;z-index:20}
 .tb-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .searchbox{flex:1 1 260px;position:relative}
 .searchbox svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);width:17px;height:17px;stroke:var(--ink-faint);fill:none;stroke-width:2}
@@ -1112,7 +1112,7 @@ function renderSection(){
   });
   const list=document.getElementById(activeTab+"-list");
   if(list)list.innerHTML=html;
-  const tabLabel=document.querySelector(".tab.active").textContent;
+  const tabLabel=document.querySelector(".tab.active").textContent.replace(/\s*\d+\s*$/,"").trim();
   document.getElementById("count").innerHTML= total===0
     ? `No matches in <b>${tabLabel}</b>`
     : `<b>${total}</b> resource${total===1?"":"s"} in ${tabLabel}${state?" · "+state:""}`;
