@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://career-compass-bgw.pages.dev/sitemap.xml
