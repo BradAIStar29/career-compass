@@ -832,6 +832,7 @@ html{scroll-padding-top:132px}
   <div class="wrap">
     <p>Career Compass — a free resource hub for job seekers.</p>
     <p style="margin-top:6px">Resource listings are informational; always verify details, pricing, and availability on each organization's official site. Know a great resource we're missing? Let us know.</p>
+    <p style="margin-top:6px"><button type="button" id="a11yBtn" style="background:none;border:none;padding:0;color:inherit;font:inherit;text-decoration:underline;cursor:pointer">Accessibility</button> — our commitment and how to give feedback.</p>
   </div>
 </footer>
 
@@ -1244,10 +1245,27 @@ document.addEventListener("click",async e=>{
   }catch(_){finish(false);}
 });
 // ---- modal system ----
-let modalEl=null;
-function renderModal(html){closeModal();modalEl=document.createElement("div");modalEl.id="ccModal";modalEl.setAttribute("role","dialog");modalEl.setAttribute("aria-modal","true");modalEl.setAttribute("aria-label","Dialog");modalEl.innerHTML='<div class="ccm-back"></div><div class="ccm-panel"><button class="ccm-close" title="Close (Esc)" aria-label="Close dialog">✕</button>'+html+'</div>';document.body.appendChild(modalEl);document.body.style.overflow="hidden";modalEl.querySelector(".ccm-close").onclick=closeModal;modalEl.querySelector(".ccm-back").onclick=closeModal;}
-function closeModal(){if(modalEl){modalEl.remove();modalEl=null;}document.body.style.overflow="";}
+let modalEl=null,modalPrevFocus=null;
+function renderModal(html){modalPrevFocus=document.activeElement;closeModal();modalEl=document.createElement("div");modalEl.id="ccModal";modalEl.setAttribute("role","dialog");modalEl.setAttribute("aria-modal","true");modalEl.setAttribute("aria-label","Dialog");modalEl.innerHTML='<div class="ccm-back"></div><div class="ccm-panel"><button class="ccm-close" title="Close (Esc)" aria-label="Close dialog">✕</button>'+html+'</div>';document.body.appendChild(modalEl);document.body.style.overflow="hidden";modalEl.querySelector(".ccm-close").onclick=closeModal;modalEl.querySelector(".ccm-back").onclick=closeModal;
+  modalEl.addEventListener("keydown",function(e){
+    if(e.key!=="Tab")return;
+    var fl=modalEl.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea,[tabindex]:not([tabindex="-1"])');
+    if(!fl.length)return;
+    var first=fl[0],last=fl[fl.length-1];
+    if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}
+    else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}
+  });
+  try{modalEl.querySelector(".ccm-close").focus();}catch(_){}
+}
+function closeModal(){if(modalEl){modalEl.remove();modalEl=null;}document.body.style.overflow="";try{if(modalPrevFocus&&document.contains(modalPrevFocus)&&modalPrevFocus.focus)modalPrevFocus.focus();}catch(_){}}
 window.closeModal=closeModal;
+document.getElementById("a11yBtn").onclick=function(){
+  renderModal('<h3 style="font-family:inherit;margin:2px 0 4px;font-size:20px;color:var(--navy);font-weight:800">Accessibility at Career Compass</h3>'
+  +'<p style="font-size:13.5px;color:var(--ink-soft,#4b5468);margin:0 0 10px">Career Compass is built to be usable by everyone, and we target WCAG 2.1 AA. Here is what that means in practice — and where we still fall short.</p>'
+  +'<div class="kit-day"><div class="kit-dnum">✓</div><div class="kit-body"><h4>What we do</h4><p style="margin:4px 0 0;font-size:12.5px">Full keyboard navigation (Tab, arrow keys, Enter, Esc) with a focus trap inside dialogs and focus returned to where you were · a visible gold focus ring on every interactive element · a "Skip to content" link · semantic landmarks (nav, main, footer) · a dark mode for low-glare reading · reduced-motion support that disables animations · text scaled by your browser settings · no hover-only functionality.</p></div></div>'
+  +'<div class="kit-day"><div class="kit-dnum">!</div><div class="kit-body"><h4>Known limitations</h4><p style="margin:4px 0 0;font-size:12.5px">We link to 1,800+ external sites, and their accessibility is outside our control. Our comparison table and some filter controls are simplest to use with a mouse, and we have not yet tested with every screen reader. These are on our list.</p></div></div>'
+  +'<div class="kit-day"><div class="kit-dnum">→</div><div class="kit-body"><h4>Give feedback</h4><p style="margin:4px 0 0;font-size:12.5px">If anything here is hard for you to use, use the \u26a0 Report issue button in the toolbar (choose "Other") or the Suggest a Resource form — describe what happened and we will fix it. Accessibility reports jump to the front of the queue.</p></div></div>');
+};
 // ---- compare ----
 const cmpBtn=document.getElementById("cmpBtn"),recentBtn=document.getElementById("recentBtn");
 const updCmpBtn=()=>{cmpBtn.textContent="Compare ("+CMP.size+")";};
