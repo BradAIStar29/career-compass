@@ -431,6 +431,11 @@ body:not(.compact) .grid{gap:14px}
 #onb .go{background:var(--gold);color:#1a2735}
 #onb .no{background:transparent;color:var(--ink-faint);border-color:var(--line)}
 @media print{#onb,.cat-share,#cmdk-wrap{display:none}}
+
+mark.hl{background:var(--gold-soft);color:var(--gold-deep);border-radius:3px;padding:0 2px;font-weight:700}
+.cat-print{margin-left:6px;flex:none;width:30px;height:30px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--ink-faint);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:color .15s,border-color .15s,transform .15s}
+.cat-print svg{width:14px;height:14px}
+.cat-print:hover{color:var(--gold-deep);border-color:var(--gold);transform:scale(1.08)}
 </style>
 </head>
 <body>
@@ -859,6 +864,7 @@ function matches(x){
   if(q){const hay=(x.n+" "+x.d+" "+x.fn.join(" ")).toLowerCase();if(!hay.includes(q))return false;}
   return true;
 }
+function hl(s){if(!q)return s;try{const terms=q.split(/\s+/).filter(t=>t.length>1).map(t=>t.replace(/[.*+?^${}()|[\]\\]/g,"\\$&"));if(!terms.length)return s;const re=new RegExp("("+terms.join("|")+")","gi");return String(s).replace(re,"<mark class=\"hl\">$1</mark>");}catch(_){return s;}}
 function card(x){
   const pills=PILL[x.p]?`<span class="pill ${PILL[x.p][0]}">${PILL[x.p][1]}</span>`:"";
   const meta=x.m?`<span class="pill meta">${x.m}</span>`:"";
@@ -866,8 +872,8 @@ function card(x){
   return `<div class="card${x.f?" featured":""}">
     <button class="cmp${CMP.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Compare side-by-side" title="Compare side-by-side">⇄</button>
     <button class="fav${FAVS.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Save to favorites" title="Save to favorites">${FAVS.has(x.u)?"♥":"♡"}</button>
-    <h4><a href="${x.u}" target="_blank" rel="noopener">${x.n}</a></h4>
-    <p>${x.d}</p>
+    <h4><a href="${x.u}" target="_blank" rel="noopener">${hl(x.n)}</a></h4>
+    <p>${hl(x.d)}</p>
     <div class="tags">${isFresh(x.add)?'<span class="pill nw">New</span>':""}${x.f?'<span class="pill hl">Top Pick</span>':""}${x.dl?'<span class="pill dl">Downloadable</span>':""}${x.lvl?'<span class="pill lvl">'+x.lvl+'</span>':""}${pills}${meta}${fnt}</div>
     ${/^https?:/.test(x.u)?`<div class="curl" title="${x.u}"><span class="curl-txt">${x.u.replace(/^https?:\/\//,"").replace(/\/$/,"")}</span><button class="curl-copy" type="button" data-u="${x.u}" title="Copy the link">Copy link</button></div>`:""}
   </div>`;
@@ -884,6 +890,7 @@ function renderSection(){
         <div class="cat-tile"><svg class="ic" viewBox="0 0 24 24">${IC[g.ic]||IC.briefcase}</svg></div>
         <div><h3>${g.c}</h3><div class="cat-sub">${items.length} of ${g.i.length} resources${g.note?"":"  ·  free unless marked"}</div></div>
         <button class="cat-share" data-t="${activeTab}" data-g="${gi}" title="Copy a link that opens this exact category" aria-label="Share this category"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
+        <button class="cat-print" data-t="${activeTab}" data-g="${gi}" title="Print this category as a clean paper checklist" aria-label="Print this category"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
         ${g.note?`<div class="cat-note">${g.note}</div>`:""}
       </div>
       <div class="grid">${items.map(card).join("")}</div>
@@ -1419,6 +1426,18 @@ if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.s
 
 /* wave-23: category share links, hash deep-links, first-visit onboarding */
 document.addEventListener("click",e=>{
+  const pr=e.target.closest(".cat-print");if(pr){
+    const t=pr.dataset.t,g=+pr.dataset.g,cat=SECTIONS[t]&&SECTIONS[t][g];if(!cat)return;
+    const items=cat.i.filter(matches);
+    const esc2=s2=>String(s2).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    const rows=items.map((x,i)=>'<div class="pr-item"><div class="pr-n">'+(i+1)+". "+esc2(x.n)+' <span class="pr-cost">'+esc2(x.p||"free")+'</span></div><div class="pr-d">'+esc2(x.d)+'</div><div class="pr-u">'+esc2(x.u)+'</div></div>').join("");
+    const w=window.open("","_blank","width=840,height=920");
+    if(!w){toast("Please allow pop-ups to print this category.");return;}
+    w.document.write('<!DOCTYPE html><html><head><title>Career Compass — '+esc2(cat.c)+'</title><style>body{font-family:Georgia,system-ui,sans-serif;max-width:720px;margin:32px auto;padding:0 20px;color:#16283e;line-height:1.5}h1{font-family:Georgia,serif;font-size:22px;color:#0f2540;margin-bottom:2px}.pr-sub{font-size:12px;color:#7a8494;margin-bottom:18px}.pr-item{page-break-inside:avoid;border-bottom:1px solid #e8e4dc;padding:10px 0}.pr-n{font-weight:700;font-size:15px}.pr-cost{font-size:11px;color:#a86a12;font-weight:700;text-transform:uppercase;margin-left:6px}.pr-d{font-size:13px;color:#4a5a6e;margin:3px 0}.pr-u{font-size:12px;color:#1a5fb4;word-break:break-all}.pr-foot{margin-top:24px;font-size:11px;color:#7a8494}</style></head><body><h1>'+esc2(cat.c)+"</h1>"+'<div class="pr-sub">'+items.length+" resources · printed from Career Compass (careercompass-jobs.netlify.app) · "+new Date().toLocaleDateString("en-US",{month:"long",year:"numeric"})+"</div>"+rows+'<div class="pr-foot">Generated by Career Compass — a free, non-profit job search directory. Verify details on each organization\'s official site.</div></body></html>');
+    w.document.close();
+    setTimeout(()=>{w.focus();w.print();},350);
+    return;
+  }
   const s=e.target.closest(".cat-share");if(!s)return;
   const t=s.dataset.t,g=+s.dataset.g,cat=SECTIONS[t]&&SECTIONS[t][g]?SECTIONS[t][g].c:"";
   const url=location.origin+location.pathname+"#c="+encodeURIComponent(t)+":"+g;
