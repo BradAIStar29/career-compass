@@ -5,7 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Career Compass — A Free Resource Hub for Job Seekers</title>
 <meta name="description" content="A comprehensive free hub for job seekers: 300+ job boards by category, function and state, free AI tools for resumes, cover letters and interviews, networking and speaker groups, inclusive resources, and free career support groups.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230f2540%27/%3E%3Cpath d=%27M16 5l2.6 7.4L26 15l-7.4 2.6L16 25l-2.6-7.4L6 15l7.4-2.6z%27 fill=%27%23e8c56a%27/%3E%3C/svg%3E"><meta property="og:title" content="Career Compass — Every Job Board, Tool &amp; Community You Need">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 rx=%277%27 fill=%27%230f2540%27/%3E%3Cpath d=%27M16 5l2.6 7.4L26 15l-7.4 2.6L16 25l-2.6-7.4L6 15l7.4-2.6z%27 fill=%27%23e8c56a%27/%3E%3C/svg%3E">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#10233f">
+  <link rel="apple-touch-icon" href="/icons/icon-180.png"><meta property="og:title" content="Career Compass — Every Job Board, Tool &amp; Community You Need">
 <meta property="og:description" content="1592+ vetted job boards filterable by category, function and state, free AI resume &amp; cover letter tools, networking and speaker groups, inclusive resources, and free career support communities.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -393,6 +396,28 @@ body:not(.compact) .grid{gap:14px}
 ::-webkit-scrollbar-thumb{background:#c6cbd6;border-radius:8px;border:2px solid var(--paper)}
 ::-webkit-scrollbar-thumb:hover{background:#aab1c0}
 [data-theme="dark"] ::-webkit-scrollbar-thumb{background:#3a4a66;border-color:var(--paper)}
+
+/* wave-22: verify note + install + command palette */
+.verify-note{text-align:center;font-size:12.5px;letter-spacing:.02em;color:var(--ink-faint);margin-top:14px}
+.verify-note b{color:var(--gold-deep)}
+#installBtn{position:fixed;top:14px;right:110px;z-index:95;width:40px;height:40px;border-radius:50%;background:var(--card);border:1.5px solid var(--line);color:var(--ink);cursor:pointer;box-shadow:var(--shadow);display:none;align-items:center;justify-content:center;transition:transform .15s}
+#installBtn:hover{transform:scale(1.08)}
+#cmdBtn{position:fixed;top:14px;right:158px;z-index:95;width:40px;height:40px;border-radius:50%;background:var(--card);border:1.5px solid var(--line);color:var(--ink-soft);cursor:pointer;box-shadow:var(--shadow);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.02em;transition:transform .15s}
+#cmdBtn:hover{transform:scale(1.08);color:var(--gold-deep)}
+#cmdk-wrap{position:fixed;inset:0;z-index:120;background:rgba(10,18,32,.55);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding-top:12vh}
+#cmdk-wrap.open{display:flex}
+#cmdk{width:min(640px,92vw);background:var(--card);border:1.5px solid var(--line);border-radius:14px;box-shadow:0 24px 60px rgba(8,14,26,.35);overflow:hidden}
+#cmdk input{width:100%;box-sizing:border-box;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--ink);font:600 16px/1 inherit;padding:16px 18px;outline:none}
+#cmdk input::placeholder{color:var(--ink-faint);font-weight:500}
+#cmdk-list{max-height:52vh;overflow:auto}
+.cmdk-row{display:flex;align-items:center;gap:10px;padding:11px 18px;cursor:pointer;border-bottom:1px solid var(--line)}
+.cmdk-row:last-child{border-bottom:0}
+.cmdk-row.active{background:var(--gold-soft)}
+.cmdk-row .ck-n{font-weight:600;color:var(--ink);font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cmdk-row .ck-sub{margin-left:auto;font-size:12px;color:var(--ink-faint);white-space:nowrap;flex-shrink:0}
+.cmdk-row .ck-k{font-size:10.5px;font-weight:700;color:var(--gold-deep);background:var(--gold-soft);border-radius:4px;padding:2px 6px;flex-shrink:0}
+.cmdk-empty{padding:22px 18px;color:var(--ink-faint);font-size:14px;text-align:center}
+.cmdk-foot{display:flex;gap:14px;padding:9px 18px;background:var(--paper);border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint)}
 </style>
 </head>
 <body>
@@ -408,6 +433,7 @@ body:not(.compact) .grid{gap:14px}
       <div class="stat"><b>50 + DC</b><span>State coverage</span></div>
       <div class="stat"><b>13</b><span>Sections</span></div>
     </div>
+    <div class="verify-note" title="Every resource URL is curl-verified before it goes live. Dead links can be reported with the Report Issue button.">✓ Every link verified live &nbsp;·&nbsp; last full sweep: October 15, 2026</div>
     <div class="kit-row"><button id="kitBtn" class="kit-btn" type="button">🆘 Just lost your job? Start the free 7-day plan</button></div>
   </div>
 </div>
@@ -678,6 +704,8 @@ body:not(.compact) .grid{gap:14px}
   <button id="themeBtn" aria-label="Toggle dark mode" title="Toggle dark mode">☾</button>
   <button id="topBtn" aria-label="Back to top" title="Back to top">↑</button>
   <button id="setBtn" aria-label="Settings" title="Settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:19px;height:19px"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+  <button id="installBtn" aria-label="Install Career Compass as an app" title="Install app"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></button>
+  <button id="cmdBtn" aria-label="Quick jump (Ctrl K or Cmd K)" title="Quick jump — Ctrl K / Cmd K">⌘K</button>
   <div id="setPanel">
     <h4>Settings</h4>
     <div class="set-row"><span>Dark mode</span><button class="set-tgl" id="setTheme" aria-label="Toggle dark mode"></button></div>
@@ -1301,6 +1329,65 @@ aiForm.onsubmit=async e=>{
   }catch(_){typing.remove();addAi("bot","Sorry — the guide is offline for a moment. Please try again shortly.");}
 };
 renderSection();
+
+/* wave-22: PWA install + command palette */
+(function(){
+  let deferredPrompt=null;const ib=document.getElementById("installBtn");
+  window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;if(ib)ib.style.display="flex";});
+  window.addEventListener("appinstalled",()=>{if(ib)ib.style.display="none";if(typeof toast==="function")toast("Career Compass installed — it now works offline.");});
+  if(ib)ib.onclick=async()=>{if(deferredPrompt){deferredPrompt.prompt();deferredPrompt=null;ib.style.display="none";}else{if(typeof renderModal==="function")renderModal("<h3>Install Career Compass</h3><p style='color:var(--ink-soft);font-size:14px;line-height:1.55'>On <b>Chrome or Edge</b> (desktop or Android): open the browser menu and choose <b>Install app</b> / <b>Add to Home screen</b>.<br><br>On <b>Safari (iPhone)</b>: tap Share, then <b>Add to Home Screen</b>.<br><br>Once installed, Career Compass opens full-screen and keeps working offline with your saved resources, favorites, and True North plan.</p>");}};
+})();
+(function(){
+  const wrap=document.createElement("div");wrap.id="cmdk-wrap";
+  wrap.innerHTML='<div id="cmdk" role="dialog" aria-label="Quick jump"><input id="cmdk-q" type="text" placeholder="Jump to anything — try NASW, resume, veterans, music…" aria-label="Search resources"><div id="cmdk-list"></div><div class="cmdk-foot"><span>↑↓ navigate</span><span>↵ open</span><span>esc close</span><span>⌘K toggle</span></div></div>';
+  document.body.appendChild(wrap);
+  const q=wrap.querySelector("#cmdk-q"),list=wrap.querySelector("#cmdk-list");
+  let IDX=null,active=0,rows=[];
+  const TABLABELS={"boards":"Job Boards","industry":"By Industry","exec":"Exec Search & Staffing","ai":"AI Tools","ldp":"Leadership Programs","volunteer":"Volunteer & Internships","additional":"Additional Resources","networking":"Networking","speakers":"Speakers","support":"Free Career Support","disability":"Disability & Neurodivergent","lgbtq":"LGBTQ+","profile":"True North","submit":"Suggest a Resource"};
+  function build(){
+    IDX=[];
+    for(const tk of Object.keys(TABLABELS))IDX.push({k:"tab",n:TABLABELS[tk],sub:"Tab",tk:tk});
+    for(const tk of Object.keys(SECTIONS))SECTIONS[tk].forEach(g=>IDX.push({k:"cat",n:g.c,sub:TABLABELS[tk]||tk,tk:tk,cat:g.c}));
+    Object.keys(URLIDX).forEach(u=>{const x=URLIDX[u];IDX.push({k:"res",n:x.it.n,sub:x.cat+" · "+(TABLABELS[x.tk]||x.tk),u:u});});
+  }
+  function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+  function render(){
+    const s=q.value.trim().toLowerCase();
+    let pool=IDX;
+    if(s){const terms=s.split(/\s+/);pool=IDX.filter(it=>{const hay=(it.n+" "+it.sub).toLowerCase();return terms.every(t=>hay.includes(t));});pool=pool.slice(0,40);}
+    else pool=pool.slice(0,12);
+    rows=pool.slice(0,14);
+    if(!rows.length){list.innerHTML='<div class="cmdk-empty">Nothing found — try a shorter word.</div>';return;}
+    list.innerHTML=rows.map((r,i)=>'<div class="cmdk-row'+(i===active?" active":"")+'" data-i="'+i+'"><span class="ck-k">'+(r.k==="res"?"↗":r.k==="cat"?"▤":"▸")+'</span><span class="ck-n">'+esc(r.n)+'</span><span class="ck-sub">'+esc(r.sub)+'</span></div>').join("");
+    [...list.querySelectorAll(".cmdk-row")].forEach(el=>{
+      el.onmouseenter=()=>{active=+el.dataset.i;paint();};
+      el.onclick=()=>{active=+el.dataset.i;go();};
+    });
+  }
+  function paint(){[...list.querySelectorAll(".cmdk-row")].forEach(el=>el.classList.toggle("active",+el.dataset.i===active));const act=list.querySelector(".cmdk-row.active");if(act)act.scrollIntoView({block:"nearest"});}
+  function go(){
+    const r=rows[active];if(!r)return;close();
+    if(r.k==="res"){window.open(r.u,"_blank","noopener");}
+    else if(r.k==="cat"){goCat(r.tk,r.cat);}
+    else{const t=document.querySelector('.tab[data-tab="'+r.tk+'"]');t&&t.click();window.scrollTo({top:0});}
+  }
+  function open(){if(!IDX)build();wrap.classList.add("open");q.value="";active=0;render();setTimeout(()=>q.focus(),30);}
+  function close(){wrap.classList.remove("open");}
+  document.getElementById("cmdBtn").onclick=()=>wrap.classList.contains("open")?close():open();
+  wrap.onclick=e=>{if(e.target===wrap)close();};
+  q.addEventListener("input",()=>{active=0;render();});
+  q.addEventListener("keydown",e=>{
+    if(e.key==="ArrowDown"){e.preventDefault();active=Math.min(active+1,rows.length-1);paint();}
+    else if(e.key==="ArrowUp"){e.preventDefault();active=Math.max(active-1,0);paint();}
+    else if(e.key==="Enter"){e.preventDefault();go();}
+    else if(e.key==="Escape"){close();}
+  });
+  document.addEventListener("keydown",e=>{
+    if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="k"){e.preventDefault();wrap.classList.contains("open")?close():open();}
+  });
+})();
+if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("/sw.js").catch(()=>{});});}
+
 </script>
 </body>
 </html>
