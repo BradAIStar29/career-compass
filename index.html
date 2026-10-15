@@ -418,15 +418,30 @@ body:not(.compact) .grid{gap:14px}
 .cmdk-row .ck-k{font-size:10.5px;font-weight:700;color:var(--gold-deep);background:var(--gold-soft);border-radius:4px;padding:2px 6px;flex-shrink:0}
 .cmdk-empty{padding:22px 18px;color:var(--ink-faint);font-size:14px;text-align:center}
 .cmdk-foot{display:flex;gap:14px;padding:9px 18px;background:var(--paper);border-top:1px solid var(--line);font-size:11.5px;color:var(--ink-faint)}
+
+/* wave-23 */
+.cat-share{margin-left:auto;flex:none;width:30px;height:30px;border-radius:8px;background:transparent;border:1px solid var(--line);color:var(--ink-faint);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:color .15s,border-color .15s,transform .15s}
+.cat-share svg{width:14px;height:14px}
+.cat-share:hover{color:var(--gold-deep);border-color:var(--gold);transform:scale(1.08)}
+.skip{position:absolute;left:-9999px;top:8px;z-index:200;background:var(--gold);color:#1a2735;font-weight:700;font-size:13px;padding:9px 16px;border-radius:8px;text-decoration:none}
+.skip:focus{left:12px}
+#onb{margin:14px auto 0;max-width:1180px;display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap;background:var(--gold-soft);border:1px solid rgba(217,154,43,.45);border-radius:12px;padding:12px 18px;font-size:14px;color:var(--ink)}
+#onb b{color:var(--gold-deep)}
+#onb button{font:700 13px/1 inherit;padding:9px 14px;border-radius:99px;cursor:pointer;border:1px solid transparent}
+#onb .go{background:var(--gold);color:#1a2735}
+#onb .no{background:transparent;color:var(--ink-faint);border-color:var(--line)}
+@media print{#onb,.cat-share,#cmdk-wrap{display:none}}
 </style>
 </head>
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
 <div class="hero">
   <div class="wrap">
     <span class="badge">Free Resource Hub</span>
     <h1>Career Compass — <em>a free resource hub for job seekers</em></h1>
     <p class="sub">1592+ vetted resources for job seekers: job boards by category, function, and state. Free and freemium AI tools for resumes, cover letters, and interviews. Networking and speaker groups. Inclusive resources for job seekers with disabilities, who are neurodivergent or LGBTQ+. And free career support groups so you never search alone.</p>
+    <div id="main"></div>
     <div class="stats">
       <div class="stat"><b>1592+</b><span>Vetted resources</span></div>
       <div class="stat"><b>20</b><span>Career functions</span></div>
@@ -443,7 +458,7 @@ body:not(.compact) .grid{gap:14px}
     <div class="tb-row navsearch">
       <div class="searchbox">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input id="q" type="text" placeholder="Search all 1592+ resources — try 'resume', 'HR', 'veteran'...">
+        <input id="q" type="text" aria-label="Search resources" placeholder="Search all 1592+ resources — try 'resume', 'HR', 'veteran'...">
       </div>
       <select id="stateSel" aria-label="Filter by state">
         <option value="">All states (nationwide)</option>
@@ -452,7 +467,12 @@ body:not(.compact) .grid{gap:14px}
     <div class="navgrid" id="tabbar">
       <div class="ngroup"><span>Start here</span><div>
         <button class="tab active" data-tab="profile">★ True North</button>
-      </div></div>
+      </div>
+    <div id="onb" role="region" aria-label="New visitor guide" style="display:none">
+      <span><b>New here?</b> Answer 6 quick questions in ★ True North and get a personal plan with your exact resources — free, takes 60 seconds.</span>
+      <button class="go" id="onbGo">Build my plan</button>
+      <button class="no" id="onbNo" aria-label="Dismiss">Maybe later</button>
+    </div></div>
       <div class="ngroup"><span>Find jobs</span><div>
         <button class="tab" data-tab="boards">Job Boards</button>
         <button class="tab" data-tab="industry">By Industry</button>
@@ -492,6 +512,8 @@ body:not(.compact) .grid{gap:14px}
       <span class="count" id="count"></span>
       <button class="clearbtn" id="newBtn" title="Resources added in the last 7 days">New this week</button>
       <button class="clearbtn" id="savedBtn" title="Your saved favorites">Saved (0)</button>
+      <button class="clearbtn" id="dlBtn" title="Show only downloadable templates, workbooks and guides">⬇ Downloadable</button>
+      <button class="clearbtn" id="topBtn" title="Show only our Top Picks — free standouts like Never Search Alone">★ Top picks</button>
       <button class="clearbtn" id="cmpBtn" title="Compare your picks side-by-side">Compare (0)</button>
       <button class="clearbtn" id="recentBtn" title="Browse everything we have added, newest first">Recently added</button>
       <button class="clearbtn" id="issueBtn" title="Spotted a broken link or a bug? Tell Bradley">⚠ Report issue</button>
@@ -820,7 +842,7 @@ const STATEBENEFITS={"Maine":[{"t":"Competitive Skills Scholarship Program (CSSP
 const STATES=["Alabama","Alaska","Arizona","Arkansas","California","Colorado","Connecticut","Delaware","District of Columbia","Florida","Georgia","Hawaii","Idaho","Illinois","Indiana","Iowa","Kansas","Kentucky","Louisiana","Maine","Maryland","Massachusetts","Michigan","Minnesota","Mississippi","Missouri","Montana","Nebraska","Nevada","New Hampshire","New Jersey","New Mexico","New York","North Carolina","North Dakota","Ohio","Oklahoma","Oregon","Pennsylvania","Rhode Island","South Carolina","South Dakota","Tennessee","Texas","Utah","Vermont","Virginia","Washington","West Virginia","Wisconsin","Wyoming"];
 
 /* =============== STATE (filters) =============== */
-let activeTab="profile", q="", fns=new Set(), cost="", state="", newOnly=false, savedOnly=false;
+let activeTab="profile", q="", fns=new Set(), cost="", state="", newOnly=false, savedOnly=false, dlOnly=false, topOnly=false;
 let CMP=new Set();const URLIDX={};
 const FAVS=new Set(JSON.parse(localStorage.getItem("ccFavs")||"[]"));
 const isFresh=d=>{if(!d)return false;const t=new Date(d).getTime();return t>0&&Date.now()-t<7*864e5;};
@@ -828,6 +850,8 @@ const isFresh=d=>{if(!d)return false;const t=new Date(d).getTime();return t>0&&D
 /* =============== RENDER =============== */
 const PILL={free:["free","Free"],freemium:["freemium","Freemium"],paid:["paid","Paid"]};
 function matches(x){
+  if(dlOnly && !x.dl) return false;
+  if(topOnly && !x.f) return false;
   if(newOnly && !(x.add && isFresh(x.add))) return false;
   if(savedOnly && !FAVS.has(x.u)) return false;
   if(cost && x.p!==cost) return false;
@@ -859,6 +883,7 @@ function renderSection(){
       <div class="cat-head">
         <div class="cat-tile"><svg class="ic" viewBox="0 0 24 24">${IC[g.ic]||IC.briefcase}</svg></div>
         <div><h3>${g.c}</h3><div class="cat-sub">${items.length} of ${g.i.length} resources${g.note?"":"  ·  free unless marked"}</div></div>
+        <button class="cat-share" data-t="${activeTab}" data-g="${gi}" title="Copy a link that opens this exact category" aria-label="Share this category"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg></button>
         ${g.note?`<div class="cat-note">${g.note}</div>`:""}
       </div>
       <div class="grid">${items.map(card).join("")}</div>
@@ -893,7 +918,7 @@ function renderSpotlight(){
   </div>${sgHtml}${benHtml}`;
   el.classList.add("show");
 }
-function clearAll(){newOnly=false;savedOnly=false;try{newBtn.classList.remove("on");savedBtn.classList.remove("on");}catch(_){}
+function clearAll(){newOnly=false;savedOnly=false;dlOnly=false;topOnly=false;try{newBtn.classList.remove("on");savedBtn.classList.remove("on");dlBtn.classList.remove("on");topBtn.classList.remove("on");}catch(_){}
   q="";document.getElementById("q").value="";
   fns=new Set();document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));
   cost="";document.getElementById("costSel").value="";
@@ -1108,9 +1133,12 @@ window.jumpTo=jumpTo;
 document.getElementById("costSel").onchange=e=>{cost=e.target.value;renderSection();};
 document.getElementById("clearBtn").onclick=clearAll;
 const newBtn=document.getElementById("newBtn"),savedBtn=document.getElementById("savedBtn");
-const updFavBtn=()=>{savedBtn.textContent="Saved ("+FAVS.size+")";savedBtn.classList.toggle("on",savedOnly);newBtn.classList.toggle("on",newOnly);};
+const updFavBtn=()=>{savedBtn.textContent="Saved ("+FAVS.size+")";savedBtn.classList.toggle("on",savedOnly);newBtn.classList.toggle("on",newOnly);};const updQuickBtns=()=>{try{dlBtn.classList.toggle("on",dlOnly);topBtn.classList.toggle("on",topOnly);}catch(_){}};
 newBtn.onclick=()=>{newOnly=!newOnly;updFavBtn();renderSection();};
 savedBtn.onclick=()=>{savedOnly=!savedOnly;updFavBtn();renderSection();};
+const dlBtn=document.getElementById("dlBtn"),topBtn=document.getElementById("topBtn");
+dlBtn.onclick=()=>{dlOnly=!dlOnly;dlBtn.classList.toggle("on",dlOnly);renderSection();};
+topBtn.onclick=()=>{topOnly=!topOnly;topBtn.classList.toggle("on",topOnly);renderSection();};
 updFavBtn();
 document.addEventListener("click",e=>{const b=e.target.closest(".fav");if(!b)return;e.preventDefault();e.stopPropagation();const u=b.dataset.u;if(FAVS.has(u))FAVS.delete(u);else FAVS.add(u);localStorage.setItem("ccFavs",JSON.stringify([...FAVS]));b.classList.toggle("on",FAVS.has(u));b.textContent=FAVS.has(u)?"♥":"♡";updFavBtn();});
 // ---- URL index for compare/recent ----
@@ -1387,6 +1415,33 @@ renderSection();
   });
 })();
 if("serviceWorker" in navigator){window.addEventListener("load",()=>{navigator.serviceWorker.register("/sw.js").catch(()=>{});});}
+
+
+/* wave-23: category share links, hash deep-links, first-visit onboarding */
+document.addEventListener("click",e=>{
+  const s=e.target.closest(".cat-share");if(!s)return;
+  const t=s.dataset.t,g=+s.dataset.g,cat=SECTIONS[t]&&SECTIONS[t][g]?SECTIONS[t][g].c:"";
+  const url=location.origin+location.pathname+"#c="+encodeURIComponent(t)+":"+g;
+  const done=()=>toast("Category link copied — share it and they land right on "+cat);
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(url).then(done).catch(done);}else{done();}
+});
+(function(){
+  const m=location.hash.match(/^#c=([a-z]+):(\d+)$/);
+  if(!m)return;
+  const t=m[1],gi=+m[2];
+  if(!SECTIONS[t]||!SECTIONS[t][gi])return;
+  const tb=document.querySelector('.tab[data-tab="'+t+'"]');if(!tb)return;
+  tb.click();
+  setTimeout(()=>{const el=document.getElementById("cat-"+gi);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});el.style.transition="box-shadow .4s";el.style.boxShadow="0 0 0 3px var(--gold)";setTimeout(()=>el.style.boxShadow="",1800);}},350);
+})();
+(function(){
+  try{if(localStorage.getItem("ccOnb"))return;}catch(_){return;}
+  const b=document.getElementById("onb");if(!b)return;
+  setTimeout(()=>{b.style.display="flex";},900);
+  const hide=()=>{try{localStorage.setItem("ccOnb","1");}catch(_){}b.style.display="none";};
+  document.getElementById("onbGo").onclick=()=>{hide();document.querySelector('.tab[data-tab="profile"]').click();window.scrollTo({top:0,behavior:"smooth"});};
+  document.getElementById("onbNo").onclick=hide;
+})();
 
 </script>
 </body>
