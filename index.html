@@ -531,6 +531,19 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
   #sideNav{display:block;position:fixed;top:0;left:0;bottom:0;width:248px;padding:14px 10px 24px;overflow-y:auto;background:var(--paper);border-right:1px solid var(--line)}
 }
 </style>
+<style id="nav3-css">
+#menuBtn{display:none;align-items:center;justify-content:center;flex:0 0 44px;width:44px;height:44px;border-radius:99px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink);cursor:pointer}
+#menuBtn:hover{border-color:var(--gold)}
+#menuBtn svg{width:18px;height:18px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round}
+#scrim{display:none}
+@media(max-width:1099px){
+  #menuBtn{display:inline-flex}
+  #sideNav{display:block;position:fixed;top:0;left:0;bottom:0;width:262px;max-width:86vw;padding:14px 10px 24px;overflow-y:auto;background:var(--paper);border-right:1px solid var(--line);transform:translateX(-110%);transition:transform .25s ease;z-index:100;box-shadow:8px 0 24px rgba(11,26,48,.18)}
+  #sideNav.open{transform:none}
+  body.nav-open #scrim{display:block;position:fixed;inset:0;background:rgba(8,15,28,.5);z-index:90}
+  body.nav-open{overflow:hidden}
+}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -556,6 +569,7 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
 <nav>
   <div class="wrap">
     <div class="tb-row navsearch">
+      <button id="menuBtn" type="button" aria-label="Open section menu" aria-expanded="false"><svg viewBox="0 0 24 24"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
       <button id="tnPill" type="button" aria-label="Go to True North — build your personal plan">★ True North</button>
       <div class="searchbox">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
@@ -565,38 +579,11 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
         <option value="">All states (nationwide)</option>
       </select>
     </div>
-    <div class="navgrid" id="tabbar">
-    <div id="onb" role="region" aria-label="New visitor guide" style="display:none">
+        <div id="onb" role="region" aria-label="New visitor guide" style="display:none">
       <span><b>New here?</b> Answer 6 quick questions in ★ True North and get a personal plan with your exact resources — free, takes 60 seconds.</span>
       <button class="go" id="onbGo">Build my plan</button>
       <button class="no" id="onbNo" aria-label="Dismiss">Maybe later</button>
-    </div></div>
-      <div class="ngroup"><span>Find jobs</span><div>
-        <button class="tab" data-tab="boards">Job Boards</button>
-        <button class="tab" data-tab="industry">By Industry</button>
-        <button class="tab" data-tab="staffing">Exec Search &amp; Staffing</button>
-      </div></div>
-      <div class="ngroup"><span>Grow</span><div>
-        <button class="tab" data-tab="ai">AI Tools</button>
-        <button class="tab" data-tab="ldp">Leadership Programs</button>
-        <button class="tab" data-tab="volunteer">Volunteer &amp; Internships</button>
-        <button class="tab" data-tab="additional">Additional Resources</button>
-      </div></div>
-      <div class="ngroup"><span>Community</span><div>
-        <button class="tab" data-tab="networking">Networking</button>
-        <button class="tab" data-tab="speakers">Speakers</button>
-        <button class="tab" data-tab="support">Free Career Support</button>
-        <button class="tab" data-tab="disability">Disability &amp; Neurodivergent</button>
-        <button class="tab" data-tab="lgbtq">LGBTQ+</button>
-      </div></div>
-      <div class="ngroup"><span>Help build this</span><div>
-        <button class="tab" data-tab="submit">Suggest a Resource</button>
-        <button class="tab" data-tab="about">About</button>
-      </div></div>
     </div>
-      <div class="ngroup"><span>Start here</span><div>
-        <button class="tab active" data-tab="profile">★ True North</button>
-      </div>
   </div>
 </nav>
 
@@ -1009,7 +996,7 @@ function renderSection(){
   });
   const list=document.getElementById(activeTab+"-list");
   if(list)list.innerHTML=html;
-  const tabLabel=document.querySelector(".tab.active").textContent.replace(/\s*\d+\s*$/,"").trim();
+  const tabLabel=sectLabel(activeTab);
   document.getElementById("count").innerHTML= total===0
     ? `No matches in <b>${tabLabel}</b>`
     : `<b>${total}</b> resource${total===1?"":"s"} in ${tabLabel}${state?" · "+state:""}`;
@@ -1057,7 +1044,7 @@ window.clearAll=clearAll;
     renderPlan(p);
   }
   function goCat(tab,catName){
-    document.querySelector('.tab[data-tab="'+tab+'"]').click();
+    showTab(tab,true);
     setTimeout(()=>{
       const idx=(SECTIONS[tab]||[]).findIndex(g=>g.c===catName);
       const el=idx>=0?document.getElementById("cat-"+idx):document.getElementById(tab);
@@ -1263,7 +1250,7 @@ function jumpTo(tk,gi,ix){
   fns=new Set();cost="";document.querySelectorAll(".chip").forEach(c=>c.classList.remove("on"));document.getElementById("costSel").value="";
   state="";document.getElementById("stateSel").value="";renderSpotlight();
   q="";document.getElementById("q").value="";
-  document.querySelector('.tab[data-tab="'+tk+'"]').click();
+  showTab(tk,true);
   q=it.n.toLowerCase();document.getElementById("q").value=it.n;
   renderSection();
   const list=document.getElementById(tk+"-list");
@@ -1432,7 +1419,7 @@ document.getElementById("kitBtn").onclick=function(){
   renderModal(kitHtml);
   modalEl.querySelectorAll(".kit-go").forEach(function(b){b.onclick=function(){closeModal();goCat(b.dataset.tab,b.dataset.cat);}});
   modalEl.querySelectorAll("[data-sb]").forEach(function(b){b.onclick=function(){closeModal();document.getElementById("spotlight").scrollIntoView({behavior:"smooth"});};});
-  modalEl.querySelector("#kitTn").onclick=function(){closeModal();document.querySelector('.tab[data-tab="profile"]').click();window.scrollTo({top:0,behavior:"smooth"});};
+  modalEl.querySelector("#kitTn").onclick=function(){closeModal();showTab("profile",true);window.scrollTo({top:0,behavior:"smooth"});};
 };
 
 // back to top
@@ -1481,11 +1468,7 @@ function renderPageHead(){
   ph.style.display="";
 }
 function showTab(t,push){
-  const tb=document.querySelector('.tab[data-tab="'+t+'"]');
-  if(!tb)return;
-  document.querySelectorAll('.tab').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});
   document.querySelectorAll('section').forEach(x=>x.classList.remove('active'));
-  tb.classList.add('active');tb.setAttribute('aria-current','true');
   activeTab=t;
   document.getElementById("filterBar").style.display=SECTIONS[activeTab]?"":"none";
   document.getElementById(activeTab).classList.add('active');
@@ -1504,7 +1487,7 @@ function showTab(t,push){
   if(push){try{history.pushState({tab:activeTab},"",routeFor(activeTab)+location.hash)}catch(_){}}
   window.scrollTo({top:0});
 }
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{showTab(t.dataset.tab,true)}));
+
 window.addEventListener('popstate',()=>{showTab(tabForRoute(location.pathname||"/"),false)});
 /* ---- persistent nav: sidebar + home banner + True North pill ---- */
 const SECT_ICONS={
@@ -1543,23 +1526,27 @@ function renderBanner(){
 }
 renderSideNav();renderBanner();
 const tp0=document.getElementById('tnPill');if(tp0)tp0.classList.toggle('on',activeTab==='profile');
+const menuBtn=document.getElementById('menuBtn'),scrim=document.getElementById('scrim');
+function closeNav(){const sv=document.getElementById('sideNav');if(sv)sv.classList.remove('open');document.body.classList.remove('nav-open');if(menuBtn)menuBtn.setAttribute('aria-expanded','false');}
+if(menuBtn)menuBtn.addEventListener('click',()=>{
+  const sv=document.getElementById('sideNav');const open=!(sv&&sv.classList.contains('open'));
+  if(sv)sv.classList.toggle('open',open);document.body.classList.toggle('nav-open',open);
+  menuBtn.setAttribute('aria-expanded',open?'true':'false');
+});
+
+window.addEventListener('keydown',e=>{if(e.key==='Escape')closeNav();});
 document.querySelectorAll('#sideNav .sitem').forEach(x=>x.classList.toggle('on',x.dataset.tab===activeTab));
 document.addEventListener('click',e=>{
-  const b=e.target.closest('#exploreBanner .eb-card, #exploreBanner .eb-more button, #sideNav .sitem, #tnPill');
+  const b=e.target.closest('#exploreBanner .eb-card, #exploreBanner .eb-more button, #sideNav .sitem, #tnPill, #scrim');
   if(!b)return;
+  if(b.id==='scrim'){closeNav();return;}
   const t=b.dataset.tab||(b.id==='tnPill'?'profile':null);
-  if(t)showTab(t,true);
+  if(t){showTab(t,true);closeNav();}
 });
-document.querySelector('.tab.active').setAttribute('aria-current','true');
 
-/* tab count badges */
+
+/* filter bar visibility */
 document.getElementById("filterBar").style.display=SECTIONS[activeTab]?"":"none";
-document.querySelectorAll('.tab').forEach(t=>{
-  const d=SECTIONS[t.dataset.tab];
-  if(!d)return;
-  let c=0;d.forEach(g=>c+=g.i.length);
-  t.insertAdjacentHTML("beforeend",` <span class="tcount">${c}</span>`);
-});
 
 /* initial route: serve the tab the URL asks for */
 (function(){
@@ -1571,14 +1558,7 @@ document.querySelectorAll('.tab').forEach(t=>{
 const origRender=renderSection;
 renderSection=function(){origRender();const l=document.getElementById(activeTab+"-list");if(l)l.querySelectorAll(".card").forEach((c,i)=>c.style.animationDelay=Math.min(i*22,420)+"ms");};
 
-/* arrow-key tab navigation */
-document.getElementById("tabbar").addEventListener("keydown",e=>{
-  if(e.key!=="ArrowRight"&&e.key!=="ArrowLeft")return;
-  const tabs=[...document.querySelectorAll(".tab")];
-  const i=tabs.findIndex(t=>t.classList.contains("active"));
-  const n=e.key==="ArrowRight"?(i+1)%tabs.length:(i-1+tabs.length)%tabs.length;
-  tabs[n].click();tabs[n].focus();
-});
+
 
 /* suggestion form (Netlify Forms, AJAX) */
 const sf=document.getElementById("suggestForm");
@@ -1665,7 +1645,7 @@ renderSection();
     const r=rows[active];if(!r)return;close();
     if(r.k==="res"){window.open(r.u,"_blank","noopener");}
     else if(r.k==="cat"){goCat(r.tk,r.cat);}
-    else{const t=document.querySelector('.tab[data-tab="'+r.tk+'"]');t&&t.click();window.scrollTo({top:0});}
+    else{showTab(r.tk,true);window.scrollTo({top:0});}
   }
   function open(){if(!IDX)build();wrap.classList.add("open");q.value="";active=0;render();setTimeout(()=>q.focus(),30);}
   function close(){wrap.classList.remove("open");}
@@ -1710,8 +1690,7 @@ document.addEventListener("click",e=>{
   if(!m)return;
   const t=m[1],gi=+m[2];
   if(!SECTIONS[t]||!SECTIONS[t][gi])return;
-  const tb=document.querySelector('.tab[data-tab="'+t+'"]');if(!tb)return;
-  tb.click();
+  showTab(t,true);
   setTimeout(()=>{const el=document.getElementById("cat-"+gi);if(el){el.scrollIntoView({behavior:"smooth",block:"start"});el.style.transition="box-shadow .4s";el.style.boxShadow="0 0 0 3px var(--gold)";setTimeout(()=>el.style.boxShadow="",1800);}},350);
 })();
 (function(){
@@ -1719,7 +1698,7 @@ document.addEventListener("click",e=>{
   const b=document.getElementById("onb");if(!b)return;
   setTimeout(()=>{b.style.display="flex";},900);
   const hide=()=>{try{localStorage.setItem("ccOnb","1");}catch(_){}b.style.display="none";};
-  document.getElementById("onbGo").onclick=()=>{hide();document.querySelector('.tab[data-tab="profile"]').click();window.scrollTo({top:0,behavior:"smooth"});};
+  document.getElementById("onbGo").onclick=()=>{hide();showTab("profile",true);window.scrollTo({top:0,behavior:"smooth"});};
   document.getElementById("onbNo").onclick=hide;
 })();
 
@@ -1736,5 +1715,6 @@ document.addEventListener("click",e=>{
 }catch(_){}})();
 
 </script>
+  <div id="scrim" aria-hidden="true"></div>
 </body>
 </html>
