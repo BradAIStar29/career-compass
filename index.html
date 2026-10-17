@@ -477,6 +477,18 @@ html{scroll-padding-top:132px}
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Career Compass","alternateName":"Career Compass — A Free Resource Hub for Job Seekers","url":"https://career-compass-bgw.pages.dev/","description":"1,800+ vetted career resources, free AI resume and interview tools, networking groups, leadership programs, and inclusive career support for every US state. Free for job seekers, nothing sponsored.","inLanguage":"en","isAccessibleForFree":true,"publisher":{"@type":"Organization","name":"Career Compass"}}</script>
+<style id="pages-css">
+#pageHead .ph{padding:26px 0 4px;border-bottom:1px solid var(--line);margin-bottom:14px}
+#pageHead .crumbs{font-size:12.5px;color:var(--mut);margin-bottom:10px;letter-spacing:.2px}
+#pageHead .crumbs a{color:var(--mut);text-decoration:none}
+#pageHead .crumbs a:hover{color:var(--gold);text-decoration:underline}
+#pageHead .crumbs .sep{margin:0 7px;opacity:.55}
+#pageHead h1{font-family:'Source Serif 4',Georgia,serif;font-size:clamp(26px,3.4vw,34px);line-height:1.15;margin:0 0 8px;font-weight:700;color:var(--ink)}
+#pageHead p{margin:0 0 10px;color:var(--mut);font-size:15px;max-width:760px}
+#pageHead .ph-count{display:inline-block;font-size:12px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--gold);border:1px solid var(--gold);border-radius:99px;padding:3px 12px;margin-bottom:16px}
+body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
+@keyframes phIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -574,6 +586,7 @@ html{scroll-padding-top:132px}
 
 <main class="wrap">
   <div class="spotlight" id="spotlight"></div>
+  <div id="pageHead" style="display:none"></div>
 
   <section id="profile" class="active">
     <div class="section-head">
@@ -1392,20 +1405,57 @@ function fillCatSel(){
 }
 catSel.onchange=()=>{const i=catSel.value;if(i==="")return;const el=document.getElementById("cat-"+i);if(el)el.scrollIntoView({behavior:"smooth",block:"start"});};
 
-/* tabs */
-document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+/* ---- pages: one URL per tab ---- */
+const PAGES={profile:"",boards:"job-boards",industry:"by-industry",staffing:"exec-search-staffing",ai:"ai-tools",ldp:"leadership-programs",volunteer:"volunteer-internships",additional:"additional-resources",networking:"networking-groups",speakers:"speaker-groups",support:"free-career-support",disability:"disability-neurodivergent",lgbtq:"lgbtq-careers",submit:"suggest-a-resource",about:"about"};
+const PAGEINFO={
+ boards:["Job Boards","Curated job boards across every category — general and remote boards, industry and diversity boards, freelance, first jobs, and niche specialities. All free to access, every link machine-checked."],
+ industry:["Jobs by Industry","Find work in your field: from tech, healthcare, and finance to skilled trades, aviation, climate, and government — boards and associations organized by industry."],
+ staffing:["Executive Search & Staffing","Retained executive search firms and staffing agencies for senior and specialized roles — plus outplacement and interim-executive services."],
+ ai:["AI Career Tools","Free and freemium AI tools for resumes, cover letters, interview practice, applicant tracking, and job-search productivity — plus a copy-paste prompt library."],
+ ldp:["Leadership Programs","Leadership development programs, management rotations, and fellowships by field — employer programs, nonprofits, and military-to-civilian pipelines."],
+ volunteer:["Volunteer & Internships","Volunteer platforms, internship programs, and board-service matching — build experience and connections while giving back."],
+ additional:["Additional Resources","Resume and cover letter templates, salary research, job trackers, interview prep, checklists, and downloadable workbooks and guides."],
+ networking:["Networking Groups","Free networking communities and job clubs — meet peers, share leads, and practice your pitch with people who get it."],
+ speakers:["Speaker Groups","Free speaker series and career panels — hear from hiring managers, recruiters, and industry leaders, usually with open Q&A."],
+ support:["Free Career Support","Career coaching, financial survival, mental health and burnout support, legal help, and free job-seeker groups in every U.S. state."],
+ disability:["Disability & Neurodivergent","Job boards and programs for job seekers with disabilities — inclusive employers, advocacy organizations, assistive tech, and neurodivergent hiring programs."],
+ lgbtq:["LGBTQ+ Careers","Resources for LGBTQ+ job seekers — inclusive employers, professional associations, community networks, and workplace-rights support."],
+ submit:["Suggest a Resource","Know a great free resource we're missing? Send it in — every suggestion is reviewed and verified before it goes live."],
+ about:["About Career Compass","Why Career Compass exists, how resources are vetted, and the promise that everything here is free."]
+};
+function routeFor(t){return PAGES[t]!==undefined?"/"+PAGES[t]:"/"}
+function tabForRoute(p){p=(p||"/").replace(/\/+$/,"")||"";for(const t in PAGES){if("/"+PAGES[t]===p||((p===""||p==="/")&&t==="profile"))return t;}return "profile"}
+function renderPageHead(){
+  const ph=document.getElementById("pageHead");if(!ph)return;
+  const info=PAGEINFO[activeTab],data=SECTIONS[activeTab];
+  if(!info||!data){ph.classList.remove("on");ph.style.display="none";return;}
+  let c=0;data.forEach(g=>c+=g.i.length);
+  ph.innerHTML='<div class="ph"><nav class="crumbs" aria-label="Breadcrumb"><a href="/">Home</a><span class="sep">›</span><span>'+info[0]+'</span></nav><h1>'+info[0]+'</h1><p>'+info[1]+'</p><span class="ph-count">'+c+' resources · '+data.length+' categories</span></div>';
+  ph.style.display="";
+}
+function showTab(t,push){
+  const tb=document.querySelector('.tab[data-tab="'+t+'"]');
+  if(!tb)return;
   document.querySelectorAll('.tab').forEach(x=>{x.classList.remove('active');x.removeAttribute('aria-current');});
   document.querySelectorAll('section').forEach(x=>x.classList.remove('active'));
-  t.classList.add('active');
-  t.setAttribute('aria-current','true');
-  activeTab=t.dataset.tab;
+  tb.classList.add('active');tb.setAttribute('aria-current','true');
+  activeTab=t;
   document.getElementById("filterBar").style.display=SECTIONS[activeTab]?"":"none";
   document.getElementById(activeTab).classList.add('active');
   fillCatSel();
   if(SECTIONS[activeTab])renderSection();renderChips();
+  renderPageHead();
+  const info=PAGEINFO[activeTab];
+  document.title=info?info[0]+" — Career Compass":"Career Compass — A Free Resource Hub for Job Seekers";
+  const canon=document.querySelector('link[rel="canonical"]');
+  if(canon)canon.setAttribute("href",location.origin+routeFor(activeTab));
+  const og=document.querySelector('meta[property="og:url"]');
+  if(og)og.setAttribute("content",location.origin+routeFor(activeTab));
+  if(push){try{history.pushState({tab:activeTab},"",routeFor(activeTab)+location.hash)}catch(_){}}
   window.scrollTo({top:0});
-}));
+}
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{showTab(t.dataset.tab,true)}));
+window.addEventListener('popstate',()=>{showTab(tabForRoute(location.pathname||"/"),false)});
 document.querySelector('.tab.active').setAttribute('aria-current','true');
 
 /* tab count badges */
@@ -1416,6 +1466,12 @@ document.querySelectorAll('.tab').forEach(t=>{
   let c=0;d.forEach(g=>c+=g.i.length);
   t.insertAdjacentHTML("beforeend",` <span class="tcount">${c}</span>`);
 });
+
+/* initial route: serve the tab the URL asks for */
+(function(){
+  const t=tabForRoute(location.pathname||"/");
+  if(t!=="profile")showTab(t,false);
+})();
 
 /* staggered card entrance */
 const origRender=renderSection;
