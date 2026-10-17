@@ -520,11 +520,15 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
 #exploreBanner .eb-more{margin-top:14px;display:flex;align-items:center;gap:16px;font-size:13px;color:var(--ink-faint)}
 #exploreBanner .eb-more button{background:none;border:none;color:var(--ink-soft);font:600 13px 'Inter',sans-serif;cursor:pointer;text-decoration:underline;padding:0}
 #exploreBanner .eb-more button:hover{color:var(--gold-deep)}
+/* desktop app shell: fixed category rail on every page, content shifts right */
+.pagewrap{max-width:none;margin:0;padding:0}
+#sideNav .sbrand{display:flex;align-items:center;gap:8px;padding:2px 10px 12px 10px;margin-bottom:8px;border-bottom:1px solid var(--line)}
+#sideNav .sbrand svg{width:18px;height:18px;stroke:var(--gold);fill:none;stroke-width:2;flex:0 0 18px}
+#sideNav .sbrand span{font-family:'Source Serif 4',Georgia,serif;font-weight:700;font-size:14.5px;color:var(--ink);letter-spacing:.2px;white-space:nowrap}
 @media(min-width:1100px){
   .navgrid{display:none}
-  body.directory .pagewrap{display:flex;align-items:flex-start}
-  body.directory #sideNav{display:block;position:sticky;top:78px;flex:0 0 218px;max-height:calc(100vh - 96px);overflow:auto;padding:2px 10px 20px 0;margin-bottom:24px}
-  body.directory .pagewrap main.wrap{flex:1;max-width:none;margin:0;padding-left:24px}
+  body{padding-left:236px}
+  #sideNav{display:block;position:fixed;top:0;left:0;bottom:0;width:224px;padding:14px 10px 24px;overflow-y:auto;background:var(--paper);border-right:1px solid var(--line)}
 }
 </style>
 </head>
@@ -1525,18 +1529,20 @@ function sectCount(t){const d=SECTIONS[t];if(!d)return 0;let c=0;d.forEach(g=>c+
 function sectLabel(t){return t==='profile'?'★ True North':(PAGEINFO[t]?PAGEINFO[t][0]:(TABLABELS[t]||t));}
 function renderSideNav(){
   const sv=document.getElementById('sideNav');if(!sv)return;
-  sv.innerHTML=SIDE_GROUPS.map(g=>'<div class="sgroup"><span>'+g[0]+'</span>'+g[1].map(t=>'<button class="sitem'+(t===activeTab?' on':'')+'" type="button" data-tab="'+t+'">'+SECT_ICONS[t]+'<span class="sn">'+sectLabel(t)+'</span>'+(t!=='profile'&&t!=='submit'&&t!=='about'?'<span class="sc">'+sectCount(t)+'</span>':'')+'</button>').join('')+'</div>').join('');
+  sv.innerHTML='<div class="sbrand">'+SECT_ICONS.profile+'<span>Career Compass</span></div>'+SIDE_GROUPS.map(g=>'<div class="sgroup"><span>'+g[0]+'</span>'+g[1].map(t=>'<button class="sitem'+(t===activeTab?' on':'')+'" type="button" data-tab="'+t+'">'+SECT_ICONS[t]+'<span class="sn">'+sectLabel(t)+'</span>'+(t!=='profile'&&t!=='submit'&&t!=='about'?'<span class="sc">'+sectCount(t)+'</span>':'')+'</button>').join('')+'</div>').join('');
 }
 function renderBanner(){
   const eb=document.getElementById('exploreBanner');if(!eb)return;
   let tot=sectCount('boards')+sectCount('industry')+sectCount('staffing')+sectCount('ai')+sectCount('ldp')+sectCount('volunteer')+sectCount('additional')+sectCount('networking')+sectCount('speakers')+sectCount('support')+sectCount('disability')+sectCount('lgbtq');
   let sg=0;Object.values(STATEGROUPS).forEach(v=>sg+=v.length);
   const order=['boards','industry','staffing','ai','ldp','volunteer','additional','networking','speakers','support','disability','lgbtq'];
-  const cards=order.map(t=>'<button class="eb-card" type="button" data-tab="'+t+'">'+SECT_ICONS[t]+'<b>'+PAGEINFO[t][0]+'</b><span class="eb-n">'+sectCount(t)+' resources</span><span class="eb-d">'+PAGEINFO[t][1].split('. ')[0]+'.</span></button>').join('');
+  const BANNER_D={boards:"Every kind of job board — general, remote, industry, diversity, freelance, and first jobs.",industry:"Boards and associations for 35+ industries, from tech to the skilled trades.",staffing:"Retained search firms and agencies for senior and specialized roles.",ai:"Free and freemium AI tools for resumes, interviews, and the whole search.",ldp:"Leadership programs, rotations, and fellowships by field.",volunteer:"Volunteer, internship, and board roles that build experience and connections.",additional:"Templates, trackers, salary research, and downloadable workbooks.",networking:"Free communities and job clubs — share leads, practice your pitch.",speakers:"Free speaker series with hiring managers and industry leaders.",support:"Coaching, financial survival, mental health, and legal help, in every state.",disability:"Inclusive employers, advocacy, and neurodivergent hiring programs.",lgbtq:"Inclusive employers, associations, and community networks."};
+  const cards=order.map(t=>'<button class="eb-card" type="button" data-tab="'+t+'">'+SECT_ICONS[t]+'<b>'+PAGEINFO[t][0]+'</b><span class="eb-n">'+sectCount(t)+' resources</span><span class="eb-d">'+BANNER_D[t]+'</span></button>').join('');
   eb.innerHTML='<div class="eb-head"><div class="kicker">Explore the library</div><h2>Browse '+(tot+sg)+'+ vetted resources by section</h2><p>Pick a section below — or build your True North plan first and it will point you to exactly what you need.</p></div><div class="eb-grid">'+cards+'</div><div class="eb-more"><span>More:</span><button type="button" data-tab="submit">Suggest a resource</button><button type="button" data-tab="about">About</button></div>';
 }
 renderSideNav();renderBanner();
 const tp0=document.getElementById('tnPill');if(tp0)tp0.classList.toggle('on',activeTab==='profile');
+document.querySelectorAll('#sideNav .sitem').forEach(x=>x.classList.toggle('on',x.dataset.tab===activeTab));
 document.addEventListener('click',e=>{
   const b=e.target.closest('#exploreBanner .eb-card, #exploreBanner .eb-more button, #sideNav .sitem, #tnPill');
   if(!b)return;
