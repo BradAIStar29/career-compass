@@ -23,6 +23,22 @@ const ct = { "Content-Type": "application/json" };
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    if (url.pathname === "/api/visit") {
+      if (request.method !== "POST")
+        return new Response(JSON.stringify({ error: "POST only" }), { status: 405, headers: ct });
+      try {
+        const data = await request.json().catch(() => ({}));
+        const r = await fetch("https://brody-5647e09e.base44.app/functions/trackVisit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data || {})
+        });
+        const txt = await r.text();
+        return new Response(txt, { status: r.status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
+      } catch (e) {
+        return new Response(JSON.stringify({ error: "server error: " + String(e && e.message) }), { status: 500, headers: ct });
+      }
+    }
     if (url.pathname === "/api/suggest") {
       if (request.method !== "POST")
         return new Response(JSON.stringify({ error: "POST only" }), { status: 405, headers: ct });
