@@ -550,6 +550,13 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
   body.nav-open{overflow:hidden}
 }
 </style>
+<style id="visit-css">
+#visitBadge{position:fixed;right:90px;bottom:28px;z-index:88;display:none;align-items:center;gap:6px;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:7px 12px;font:700 12px/1 'Inter',sans-serif;color:var(--ink-soft);box-shadow:var(--shadow)}
+#visitBadge.show{display:inline-flex}
+#visitBadge svg{width:14px;height:14px;stroke:var(--gold);fill:none;stroke-width:2;flex:0 0 14px}
+#visitBadge b{font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
+@media(max-width:640px){#visitBadge{right:86px;bottom:16px;padding:6px 10px;font-size:11px}#visitBadge b{font-size:11.5px}}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -841,6 +848,10 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
     <div class="set-row"><span>Reduce motion</span><button class="set-tgl" id="setMotion" aria-label="Toggle reduce motion"></button></div>
     <div class="set-row" style="border-bottom:none"><span>Clear saved info</span><button class="set-clear" id="setClear">Clear</button></div>
     <p class="set-note">Your settings and profile stay on this device only.</p>
+  </div>
+  <div id="visitBadge" role="status" aria-live="polite" title="Page views — counted on our own server. No cookies, no personal data, nothing stored in your browser beyond the number itself.">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    <b>—</b><span>views</span>
   </div>
   <button id="aiFab" aria-label="Open the free AI career guide" title="Ask Compass — free AI career guide"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><path d="M8 10h.01M12 10h.01M16 10h.01"/></svg></button>
   <div id="aiPanel" role="dialog" aria-label="AI career guide">
@@ -1581,6 +1592,19 @@ const origRender=renderSection;
 renderSection=function(){origRender();const l=document.getElementById(activeTab+"-list");if(l)l.querySelectorAll(".card").forEach((c,i)=>c.style.animationDelay=Math.min(i*22,420)+"ms");};
 
 
+
+/* visitor counter — anonymous page-view total from our own backend */
+(function(){
+  const b=document.getElementById('visitBadge');if(!b)return;
+  const num=b.querySelector('b');
+  const show=t=>{const n=Number(t);if(!Number.isFinite(n))return;num.textContent=n.toLocaleString();b.classList.add('show');b.setAttribute('aria-label',n.toLocaleString()+' page views');};
+  try{const c=parseInt(localStorage.getItem('cc_visits')||'',10);if(c>0)show(c);}catch(_){}
+  if(!/^https?:$/.test(location.protocol))return;
+  if(typeof fetch!=='function')return;
+  fetch('/api/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})
+    .then(r=>r.json()).then(j=>{if(j&&j.ok){show(j.total);try{localStorage.setItem('cc_visits',String(j.total));}catch(_){}}})
+    .catch(()=>{});
+})();
 
 /* suggestion form (Netlify Forms, AJAX) */
 const sf=document.getElementById("suggestForm");
