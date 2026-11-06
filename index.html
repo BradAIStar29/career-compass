@@ -622,6 +622,7 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
       <button class="clearbtn" id="histBtn" title="Resources you opened recently" aria-label="Recently viewed resources">🕘 Viewed (0)</button>
       <button class="clearbtn" id="dlBtn" title="Show only downloadable templates, workbooks and guides" aria-label="Show only downloadable templates, workbooks and guides">⬇ Downloadable</button>
       <button class="clearbtn" id="topBtn" title="Show only our Top Picks — free standouts like Never Search Alone" aria-label="Show only our Top Picks — free standouts like Never Search Alone">★ Top picks</button>
+      <button class="clearbtn" id="viewBtn" title="Copy a link that reopens these exact filters" aria-label="Copy a link to this filtered view">🔗 Copy view</button>
       <button class="clearbtn" id="printBtn" title="Print or save your saved resources as a checklist" aria-label="Print your saved list as a checklist">🖨 Print my list</button>
       <button class="clearbtn" id="cmpBtn" title="Compare your picks side-by-side" aria-label="Compare your picks side-by-side">Compare (0)</button>
       <button class="clearbtn" id="recentBtn" title="Browse everything we have added, newest first" aria-label="Browse everything we have added, newest first">Recently added</button>
@@ -970,7 +971,22 @@ let CMP=new Set();const URLIDX={};
 const TABLABELS={"boards":"Job Boards","industry":"By Industry","exec":"Exec Search & Staffing","ai":"AI Tools","ldp":"Leadership Programs","volunteer":"Volunteer & Internships","additional":"Additional Resources","networking":"Networking","speakers":"Speakers","support":"Free Career Support","disability":"Disability & Neurodivergent","lgbtq":"LGBTQ+","profile":"True North","submit":"Suggest a Resource"};
 const FAVS=new Set(JSON.parse(localStorage.getItem("ccFavs")||"[]"));
 const RECENT=JSON.parse(localStorage.getItem("ccRecent")||"[]");
-let SORTMODE="rec";
+let SORTMODE=(function(){try{var s=localStorage.getItem("ccSort");return (s==="az"||s==="new")?s:"rec";}catch(_){return "rec";}})();
+/* ---- shareable filtered views ---- */
+function viewObj(){const o={t:activeTab};if(q)o.q=q;if(fns.size)o.fn=[...fns];if(cost)o.c=cost;if(dlOnly)o.d=1;if(topOnly)o.top=1;if(newOnly)o.n=1;if(savedOnly)o.s=1;return (o.q||o.fn||o.c||o.d||o.top||o.n||o.s)?o:null;}
+function viewHash(){const o=viewObj();return o?"#v="+encodeURIComponent(JSON.stringify(o)):"";}
+function syncViewHash(){try{const h=viewHash(),cur=location.hash||"";if(h){if(cur!==h)history.replaceState(history.state||{},"",location.pathname+h);}else if(/^#v=/.test(cur)){history.replaceState(history.state||{},"",location.pathname);}}catch(_){}}
+function applyView(o){if(!o||typeof o!=="object")return;
+  activeTab=(o.t&&SECTIONS&&SECTIONS[o.t])?o.t:activeTab;
+  q=String(o.q||"").toLowerCase();
+  fns=new Set(Array.isArray(o.fn)?o.fn:[]);
+  cost=o.c||"";dlOnly=!!o.d;topOnly=!!o.top;newOnly=!!o.n;savedOnly=!!o.s;
+  try{document.getElementById("q").value=o.q||"";document.getElementById("costSel").value=cost;}catch(_){}
+  try{renderChips();}catch(_){}
+  try{newBtn.classList.toggle("on",newOnly);savedBtn.classList.toggle("on",savedOnly);dlBtn.classList.toggle("on",dlOnly);topBtn.classList.toggle("on",topOnly);}catch(_){}
+}
+function copyText(t){try{if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t);return true;}}catch(_){}try{const ta=document.createElement("textarea");ta.value=t;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();document.execCommand("copy");ta.remove();return true;}catch(_){return false;}}
+function openGlobalSearch(term){try{const w=document.getElementById("cmdk-wrap");if(!w)return;w.classList.add("open");const inp=document.getElementById("cmdk-q");if(inp){inp.value=term||"";inp.dispatchEvent(new Event("input"));setTimeout(()=>{try{inp.focus();}catch(_){}},40);}}catch(_){}}
 function recVisit(u){if(!u)return;const i=RECENT.indexOf(u);if(i>-1)RECENT.splice(i,1);RECENT.unshift(u);while(RECENT.length>30)RECENT.pop();try{localStorage.setItem("ccRecent",JSON.stringify(RECENT));}catch(_){}const hb=document.getElementById("histBtn");if(hb)hb.textContent="🕘 Viewed ("+RECENT.length+")";}
 const isFresh=d=>{if(!d)return false;const t=new Date(d).getTime();return t>0&&Date.now()-t<7*864e5;};
 
@@ -1032,7 +1048,21 @@ function renderSection(){
     : `<b>${total}</b> resource${total===1?"":"s"} in ${tabLabel}${state?" · "+state:""}`;
   document.querySelectorAll(".empty").forEach(e=>e.remove());
   if(total===0 && list){
-    list.insertAdjacentHTML("afterend",`<div class="empty show"><div class="big">Nothing matches those filters</div><p>Try clearing a filter or searching a different word.</p><button class="clearbtn" onclick="clearAll()" style="font-size:14px">Clear all filters</button></div>`);
+    const hasOther=fns.size||cost||dlOnly||topOnly||newOnly||savedOnly;
+    const sugg=["remote","resume","interview","healthcare","apprenticeship","training"].filter(t=>t!==q).slice(0,4);
+    list.insertAdjacentHTML("afterend",`<div class="empty show"><div class="big">Nothing matches those filters</div>
+      <p>${hasOther?"Your search and the filters above are too narrow together.":(q?"No resource in <b>"+tabLabel+"</b> matches that word.":"No resources here yet.")}</p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0">
+        ${hasOther?'<button class="clearbtn" id="emptyWiden" style="font-size:14px">Keep my search, drop other filters</button>':''}
+        ${q?'<button class="clearbtn" id="emptyAll" style="font-size:14px">Search all sections for \u201C'+q+'\u201D</button>':''}
+        <button class="clearbtn" onclick="clearAll()" style="font-size:14px">Clear all filters</button>
+      </div>
+      ${q?'<p style="font-size:13px;color:var(--ink-soft);margin:0">Or try one of these: '+sugg.map(t=>'<button class="clearbtn" data-tryq="'+t+'" style="font-size:12px;padding:5px 10px">'+t+'</button>').join(" ")+'</p>':''}</div>`);
+    const ew=document.getElementById("emptyWiden");
+    if(ew)ew.onclick=()=>{fns=new Set();cost="";dlOnly=topOnly=newOnly=savedOnly=false;try{document.getElementById("costSel").value="";newBtn.classList.remove("on");savedBtn.classList.remove("on");dlBtn.classList.remove("on");topBtn.classList.remove("on");}catch(_){}renderChips();renderSection();};
+    const ea=document.getElementById("emptyAll");
+    if(ea)ea.onclick=()=>openGlobalSearch(q);
+    (list.parentElement||document).querySelectorAll("[data-tryq]").forEach(b=>b.onclick=()=>{q=b.dataset.tryq;document.getElementById("q").value=b.dataset.tryq;renderSection();});
   }
 }
 function renderSpotlight(){
@@ -1252,7 +1282,13 @@ const FNGROUPS=[["Career field",["General","HR & People","Finance","Tech & IT","
 function renderChips(){
   const data=SECTIONS[activeTab]||[];
   const c={};data.forEach(g=>g.i.forEach(it=>(it.fn||[]).forEach(fl=>{if(typeof fl==="string")c[fl]=(c[fl]||0)+1})));
-  chipBox.innerHTML=FNGROUPs_map(FNGROUPS,activeTab==="profile"||activeTab==="submit"||activeTab==="about"?null:c,fns);
+  /* some tabs use their own taxonomy (e.g. AI tools: Resume & ATS, Interview Prep).
+     Surface any tag present on this tab but missing from the global chip sets, so
+     every filterable tag is clickable instead of silently unreachable. */
+  const known=new Set();FNGROUPS.forEach(gp=>gp[1].forEach(t=>known.add(t)));
+  const extra=Object.keys(c).filter(t=>!known.has(t)).sort((a,b)=>c[b]-c[a]);
+  const groups=FNGROUPS.concat(extra.length?[["This section",extra]]:[]);
+  chipBox.innerHTML=FNGROUPs_map(groups,activeTab==="profile"||activeTab==="submit"||activeTab==="about"?null:c,fns);
 }
 function FNGROUPs_map(groups,c,sel){return groups.map(function(gp){var label=gp[0],fs=gp[1];return '<span class="chipg">'+label+'</span>'+fs.map(function(f){var n=c?(c[f]||0):0;return '<button class="chip'+(sel&&sel.has(f)?" on":"")+(n===0&&c?" zero":"")+'" data-fn="'+f+'">'+f+'<span class="cc">'+n+'</span></button>';}).join("");}).join("");}
 chipBox.addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const f=b.dataset.fn;if(fns.has(f))fns.delete(f);else fns.add(f);renderChips();renderSection();});
@@ -1297,7 +1333,9 @@ newBtn.onclick=()=>{newOnly=!newOnly;updFavBtn();renderSection();};
 savedBtn.onclick=()=>{savedOnly=!savedOnly;updFavBtn();renderSection();};
 /* recently viewed */
 const sortSel=document.getElementById('sortSel'),histBtn=document.getElementById('histBtn');
-if(sortSel)sortSel.onchange=()=>{SORTMODE=sortSel.value;renderSection();};
+if(sortSel){sortSel.value=SORTMODE;sortSel.onchange=()=>{SORTMODE=sortSel.value;try{localStorage.setItem("ccSort",SORTMODE);}catch(_){}renderSection();};}
+const viewBtn=document.getElementById("viewBtn");
+if(viewBtn)viewBtn.onclick=()=>{const url=location.origin+location.pathname+(viewHash()||"");const ok=copyText(url);toast(ok?(viewHash()?"Link copied — it reopens with these exact filters.":"Link copied — nothing is filtered right now, so this opens the full directory."):"Couldn't copy automatically — your browser blocked it. Copy the address bar instead.");};
 if(histBtn)histBtn.onclick=()=>{
   const rows=RECENT.map(u=>URLIDX[u]).filter(Boolean);
   const body=rows.length?rows.map(x=>`<div class="hist-row"><a href="${x.it.u}" target="_blank" rel="noopener">${x.it.n}</a><span class="hist-meta">${TABLABELS[x.tk]||x.tk}${x.cat?' · '+x.cat:''}</span></div>`).join(''):'<p class="modal-p">Nothing here yet — as you open resources, they show up here so you can find your way back.</p>';
@@ -1620,6 +1658,13 @@ document.addEventListener('click',e=>{
 /* filter bar visibility */
 document.getElementById("filterBar").style.display=SECTIONS[activeTab]?"":"none";
 
+/* restore a shared filtered view (#v=) */
+(function(){
+  const m=(location.hash||"").match(/^#v=([\s\S]+)$/);
+  if(!m)return;
+  try{const o=JSON.parse(decodeURIComponent(m[1]));applyView(o);if(o.t&&SECTIONS[o.t])showTab(o.t,false);}catch(_){}
+})();
+
 /* initial route: serve the tab the URL asks for */
 (function(){
   const t=tabForRoute(location.pathname||"/");
@@ -1628,7 +1673,7 @@ document.getElementById("filterBar").style.display=SECTIONS[activeTab]?"":"none"
 
 /* staggered card entrance */
 const origRender=renderSection;
-renderSection=function(){origRender();const l=document.getElementById(activeTab+"-list");if(l)l.querySelectorAll(".card").forEach((c,i)=>c.style.animationDelay=Math.min(i*22,420)+"ms");};
+renderSection=function(){origRender();syncViewHash();const l=document.getElementById(activeTab+"-list");if(l)l.querySelectorAll(".card").forEach((c,i)=>c.style.animationDelay=Math.min(i*22,420)+"ms");};
 
 
 
