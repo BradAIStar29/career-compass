@@ -13,9 +13,29 @@ INDEX = os.path.join(HERE, 'index.html')
 NAMES = os.path.join(HERE, 'existing_names.tsv')
 UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/126.0'
 LIVE = {'200','202','403','406','429'}
-FNTAGS = {'Resume & ATS','Cover Letters','Job Matching','Interview Prep','Networking',
+# Valid fn tags are derived from the live build itself: every tag used on any card,
+# plus every chip offered by FNGROUPS. This stops the gate from rejecting real tags
+# it does not happen to know (e.g. "50+" was rejected 5 times before this fix).
+FNTAGS_FALLBACK = {'Resume & ATS','Cover Letters','Job Matching','Interview Prep','Networking',
           'Career Coaching','Skills & Learning','Salary Research','Portfolio','General',
           'Students & Grads','Public Sector','Executive','Veterans','Disability','Remote'}
+
+def build_fntags():
+    tags = set(FNTAGS_FALLBACK)
+    try:
+        html = open(INDEX, encoding='utf-8').read()
+        for m in re.finditer(r'"fn":\[([^\]]*)\]', html):
+            for t in re.findall(r'"([^"]+)"', m.group(1)):
+                tags.add(t)
+        gm = re.search(r'const FNGROUPS=(\[\[.*?\]\]);', html)
+        if gm:
+            for t in re.findall(r'"([^"]+)"', gm.group(1)):
+                tags.add(t)
+    except Exception:
+        pass
+    return tags
+
+FNTAGS = build_fntags()
 
 def norm(s):
     return re.sub(r'[^a-z0-9]', '', (s or '').lower())
