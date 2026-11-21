@@ -640,7 +640,7 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
       <button class="clearbtn" id="trackBtn" title="Track your applications, interviews and notes" aria-label="Open application tracker">📋 Tracker</button>
       <button class="clearbtn" id="csvBtn" title="Download your saved resources as a spreadsheet" aria-label="Export saved resources as CSV">🗂 Export CSV</button>
       <button class="clearbtn" id="printBtn" title="Print or save your saved resources as a checklist" aria-label="Print your saved list as a checklist">🖨 Print my list</button>
-      <button class="clearbtn" id="cmpBtn" title="Compare your picks side-by-side" aria-label="Compare your picks side-by-side">Compare (0)</button>
+      <button class="clearbtn" id="matchBtn" title="Paste a job posting and your resume to see which keywords you are missing — runs entirely in your browser" aria-label="Check your resume against a job posting">🎯 Match check</button><button class="clearbtn" id="cmpBtn" title="Compare your picks side-by-side" aria-label="Compare your picks side-by-side">Compare (0)</button>
       <button class="clearbtn" id="recentBtn" title="Browse everything we have added, newest first" aria-label="Browse everything we have added, newest first">Recently added</button>
       <span class="tb-sep" role="separator" aria-hidden="true"></span><span class="tb-lab" aria-hidden="true">More</span><button class="clearbtn" id="issueBtn" title="Spotted a broken link or a bug? Tell Bradley" aria-label="Spotted a broken link or a bug? Tell Bradley">⚠ Report issue</button>
       <button class="clearbtn" id="surpriseBtn" title="Get a random resource to discover something new" aria-label="Get a random resource to discover something new">Surprise me</button>
@@ -1499,6 +1499,54 @@ function renderModal(html){modalPrevFocus=document.activeElement;closeModal();mo
 }
 function closeModal(){if(modalEl){modalEl.remove();modalEl=null;}document.body.style.overflow="";try{if(modalPrevFocus&&document.contains(modalPrevFocus)&&modalPrevFocus.focus)modalPrevFocus.focus();}catch(_){}}
 window.closeModal=closeModal;
+/* ---- match check: private resume-to-posting keyword overlap ---- */
+(function(){
+  var mb=document.getElementById("matchBtn"); if(!mb) return;
+  var STOP={};
+  ("a,an,the,and,or,but,if,then,than,that,this,these,those,to,of,in,on,for,with,without,from,by,as,at,is,are,was,were,be,been,being,do,does,did,have,has,had,will,would,can,could,should,may,might,must,not,no,nor,so,such,very,more,most,other,others,you,your,yours,we,our,ours,they,their,them,i,me,my,mine,he,she,it,its,who,whom,which,what,when,where,why,how,all,any,both,each,few,some,own,same,too,also,about,into,over,under,again,further,once,here,there,up,down,out,off,only,just,now,new,etc,per,plus,via,across,within,including,include,includes,ability,able,work,working,works,job,jobs,role,roles,team,teams,company,companies,candidate,candidates,applicant,applicants,experience,years,year,strong,excellent,great,good,preferred,required,requirement,requirements,responsibilities,qualification,qualifications,duties,skill,skills,knowledge,environment,opportunity,opportunities,looking,seeking,join,help,support,well,us,our,will,youll,youre,were,weve,theyre,daily,week,month,based,using,use,used,ensure,ensuring,provide,providing,maintain,maintaining,manage,managing,develop,developing,related,field,degree,equivalent,plus,one,two,three,four,five,minimum,least,like,make,making,take,taking,get,getting")
+    .split(",").forEach(function(w){STOP[w]=1});
+  function toks(t){
+    var out=(String(t||"").toLowerCase().match(/[a-z][a-z+#.]{2,}/g)||[]);
+    return out.map(function(w){return w.replace(/[.]+$/,"")}).filter(function(w){return w.length>2 && !STOP[w]});
+  }
+  function analyse(){
+    var post=document.getElementById("mc-post").value, res=document.getElementById("mc-res").value;
+    var out=document.getElementById("mc-out");
+    if(!post.trim()||!res.trim()){
+      out.innerHTML='<p style="margin:0;font-size:13px;color:#8a93a3">Paste both the posting and your resume, then run the check.</p>';
+      return;
+    }
+    var freq={}, order=[];
+    toks(post).forEach(function(w){ if(freq[w]===undefined){freq[w]=0;order.push(w);} freq[w]++; });
+    var keys=order.slice().sort(function(a,b){return freq[b]-freq[a]||a.localeCompare(b)}).slice(0,30);
+    var resTxt=String(res).toLowerCase();
+    var have=[],miss=[];
+    keys.forEach(function(k){ (resTxt.indexOf(k)>=0?have:miss).push(k); });
+    var pct=keys.length?Math.round(have.length*100/keys.length):0;
+    var colour=pct>=70?"#1f7a4d":(pct>=40?"#a8791f":"#b8443c");
+    var chip=function(w,cls){return '<span class="fn-tag" style="margin:0 4px 4px 0;display:inline-block">'+w+'</span>'};
+    out.innerHTML='<div style="font-size:28px;font-weight:800;color:'+colour+';line-height:1.1">'+pct+'%</div>'
+      +'<div style="font-size:12.5px;color:#8a93a3;margin:2px 0 12px">of the posting\'s top keywords appear in your resume — '
+      +have.length+' of '+keys.length+'</div>'
+      +(miss.length?'<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#b8443c;margin-bottom:6px">Missing — consider adding what is true</div><div style="margin-bottom:14px">'+miss.map(function(w){return chip(w)}).join("")+'</div>':'')
+      +(have.length?'<div style="font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#1f7a4d;margin-bottom:6px">Already covered</div><div>'+have.map(function(w){return chip(w)}).join("")+'</div>':'')
+      +'<p style="margin:14px 0 0;font-size:12px;color:#8a93a3">Only add a keyword if it is genuinely true of your work. Matching words you cannot defend in an interview hurts more than it helps.</p>';
+  }
+  mb.onclick=function(){
+    renderModal('<h3 style="font-family:inherit;margin:2px 0 4px;font-size:20px;color:var(--navy);font-weight:800">Match check</h3>'
+      +'<p style="font-size:13px;color:var(--ink-soft,#4b5468);margin:0 0 12px">Paste a job posting and your resume. We compare the posting\'s top keywords against your resume and show what is missing. '
+      +'<b>Nothing leaves your browser</b> — this runs entirely on your device, with no account and no upload.</p>'
+      +'<label for="mc-post" style="display:block;font-size:12px;font-weight:700;margin-bottom:4px">Job posting</label>'
+      +'<textarea id="mc-post" rows="5" style="width:100%;box-sizing:border-box;font:13px/1.5 inherit;padding:10px;border:1px solid var(--line,#d8dde6);border-radius:10px;background:var(--card,#fff);color:var(--ink,#1d2534);resize:vertical" placeholder="Paste the full posting here"></textarea>'
+      +'<label for="mc-res" style="display:block;font-size:12px;font-weight:700;margin:12px 0 4px">Your resume</label>'
+      +'<textarea id="mc-res" rows="5" style="width:100%;box-sizing:border-box;font:13px/1.5 inherit;padding:10px;border:1px solid var(--line,#d8dde6);border-radius:10px;background:var(--card,#fff);color:var(--ink,#1d2534);resize:vertical" placeholder="Paste your resume text here"></textarea>'
+      +'<div style="display:flex;gap:10px;align-items:center;margin-top:14px"><button class="clearbtn" id="mc-run" style="border-color:var(--gold,#c9a227);font-weight:800">Check my match</button>'
+      +'<span style="font-size:12px;color:#8a93a3">Free, private, no sign-up</span></div>'
+      +'<div id="mc-out" style="margin-top:16px;min-height:40px"><p style="margin:0;font-size:13px;color:#8a93a3">Results appear here.</p></div>');
+    var run=document.getElementById("mc-run");
+    if(run) run.onclick=analyse;
+  };
+})();
 document.getElementById("a11yBtn").onclick=function(){
   renderModal('<h3 style="font-family:inherit;margin:2px 0 4px;font-size:20px;color:var(--navy);font-weight:800">Accessibility at Career Compass</h3>'
   +'<p style="font-size:13.5px;color:var(--ink-soft,#4b5468);margin:0 0 10px">Career Compass is built to be usable by everyone, and we target WCAG 2.1 AA. Here is what that means in practice — and where we still fall short.</p>'
