@@ -62,7 +62,10 @@ def seg(f, name):
 
 def gate(wave):
     """Run the project gate; returns path to the clean file (or None)."""
-    out = subprocess.run([sys.executable, os.path.join(HUB, 'validate_wave.py'), wave],
+    # the wave files live in the conversation root, but the gate runs with cwd=HUB,
+    # so it must receive an absolute path or it silently reads nothing
+    wave_abs = wave if os.path.isabs(wave) else os.path.join(ROOT, wave)
+    out = subprocess.run([sys.executable, os.path.join(HUB, 'validate_wave.py'), wave_abs],
                          cwd=HUB, capture_output=True, text=True)
     clean = wave.replace('.json', '.clean.json')
     ok = os.path.exists(clean)
