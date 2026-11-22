@@ -571,6 +571,17 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
 #visitBadge b{font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
 @media(max-width:640px){#visitBadge{right:86px;bottom:16px;padding:6px 10px;font-size:11px}#visitBadge b{font-size:11.5px}}
 </style>
+<style id="ux-nov22">
+.chip.zero{cursor:default;opacity:.42;pointer-events:none}
+.startpin{display:inline-block;margin:0 0 6px;padding:2px 9px;border-radius:99px;background:var(--gold-soft);border:1px solid rgba(217,154,43,.5);color:var(--gold-deep);font:700 11px/1.5 inherit;letter-spacing:.04em;text-transform:uppercase}
+.tb-hist{position:relative;display:inline-block}
+.tb-hist>summary{list-style:none;cursor:pointer}
+.tb-hist>summary::-webkit-details-marker{display:none}
+.tb-hist[open]>summary{background:var(--gold-soft);border-color:var(--gold)}
+.tb-hist-menu{position:absolute;z-index:60;top:calc(100% + 6px);left:0;min-width:220px;display:flex;flex-direction:column;gap:6px;padding:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow)}
+.tb-hist-menu .clearbtn{width:100%;text-align:left;justify-content:flex-start}
+@media(max-width:760px){.navsearch #stateSel{flex:1 1 100%;order:9;max-width:none;width:100%}}
+</style>
 </head>
 <body>
 <a class="skip" href="#main">Skip to content</a>
@@ -579,7 +590,7 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
   <div class="wrap">
     <span class="badge">Free Resource Hub</span>
     <h1>Career Compass — <em>a free resource hub for job seekers</em></h1>
-    <p class="sub">2284+ vetted resources for job seekers: job boards by category, function, and state. Free and freemium AI tools for resumes, cover letters, and interviews. Networking and speaker groups. Inclusive resources for job seekers with disabilities, who are neurodivergent or LGBTQ+. And free career support groups so you never search alone.</p>
+    <p class="sub">2284+ vetted resources for job seekers — job boards by industry, function, and state, free AI tools for resumes and interviews, and networking groups. No account, no paywall.</p>
     <div id="main"></div>
     <div class="stats">
       <div class="stat"><b id="heroStat">2284+</b><span>Vetted resources</span></div>
@@ -631,9 +642,9 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
     <select id="catSel" aria-label="Jump to a category"><option value="">Jump to category…</option></select>
     <div class="tb-meta">
       <span class="count" id="count" role="status" aria-live="polite" aria-atomic="true"></span><div id="srSection" class="sr-only" role="status" aria-live="polite"></div>
-      <span class="tb-lab" aria-hidden="true">Filters</span><button class="clearbtn" id="newBtn" title="Resources added in the last 7 days" aria-label="Resources added in the last 7 days">New this week</button>
-      <button class="clearbtn" id="savedBtn" title="Your saved favorites" aria-label="Your saved favorites">Saved (0)</button>
-      <button class="clearbtn" id="histBtn" title="Resources you opened recently" aria-label="Recently viewed resources">🕘 Viewed (0)</button>
+      <span class="tb-lab" aria-hidden="true">Filters</span>
+      <details class="tb-hist"><summary class="clearbtn" aria-label="History: recently added, recently viewed, and new this week">🕘 History ▾</summary><div class="tb-hist-menu"><button class="clearbtn" id="recentBtn" title="Browse everything we have added, newest first" aria-label="Browse everything we have added, newest first">Recently added</button><button class="clearbtn" id="histBtn" title="Resources you opened recently" aria-label="Recently viewed resources">🕘 Viewed (0)</button><button class="clearbtn" id="newBtn" title="Resources added in the last 7 days" aria-label="Resources added in the last 7 days">New this week</button></div></details><button class="clearbtn" id="savedBtn" title="Your saved favorites" aria-label="Your saved favorites">Saved (0)</button>
+      
       <button class="clearbtn" id="dlBtn" title="Show only downloadable templates, workbooks and guides" aria-label="Show only downloadable templates, workbooks and guides">⬇ Downloadable</button>
       <button class="clearbtn" id="topBtn" title="Show only our Top Picks — free standouts like Never Search Alone" aria-label="Show only our Top Picks — free standouts like Never Search Alone">★ Top picks</button>
       <span class="tb-sep" role="separator" aria-hidden="true"></span><span class="tb-lab" aria-hidden="true">Tools</span><button class="clearbtn" id="viewBtn" title="Copy a link that reopens these exact filters" aria-label="Copy a link to this filtered view">🔗 Copy view</button>
@@ -641,7 +652,7 @@ body:not(.compact) #pageHead .ph{animation:phIn .35s ease both}
       <button class="clearbtn" id="csvBtn" title="Download your saved resources as a spreadsheet" aria-label="Export saved resources as CSV">🗂 Export CSV</button>
       <button class="clearbtn" id="printBtn" title="Print or save your saved resources as a checklist" aria-label="Print your saved list as a checklist">🖨 Print my list</button>
       <button class="clearbtn" id="matchBtn" title="Paste a job posting and your resume to see which keywords you are missing — runs entirely in your browser" aria-label="Check your resume against a job posting">🎯 Match check</button><button class="clearbtn" id="cmpBtn" title="Compare your picks side-by-side" aria-label="Compare your picks side-by-side">Compare (0)</button>
-      <button class="clearbtn" id="recentBtn" title="Browse everything we have added, newest first" aria-label="Browse everything we have added, newest first">Recently added</button>
+      
       <span class="tb-sep" role="separator" aria-hidden="true"></span><span class="tb-lab" aria-hidden="true">More</span><button class="clearbtn" id="issueBtn" title="Spotted a broken link or a bug? Tell Bradley" aria-label="Spotted a broken link or a bug? Tell Bradley">⚠ Report issue</button>
       <button class="clearbtn" id="surpriseBtn" title="Get a random resource to discover something new" aria-label="Get a random resource to discover something new">Surprise me</button>
       <button class="clearbtn" id="clearBtn">Clear filters</button>
@@ -1037,11 +1048,11 @@ try{
 }catch(_){}
 const vnEl=document.querySelector(".verify-note");
 if(vnEl)vnEl.innerHTML="✓ Every link verified live &nbsp;·&nbsp; last full sweep: "+LASTSWEEP;
-function card(x){
+function card(x,pin){
   const pills=PILL[x.p]?`<span class="pill ${PILL[x.p][0]}">${PILL[x.p][1]}</span>`:"";
   const meta=x.m?`<span class="pill meta">${x.m}</span>`:"";
   const fnt=(x.fn||[]).slice(0,3).map(f=>`<span class="fn-tag">${f}</span>`).join("");
-  return `<div class="card${x.f?" featured":""}">
+  return `<div class="card${x.f?" featured":""}">${pin?'<span class="startpin">★ Start here</span>':""}
     <button class="cmp${CMP.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Compare side-by-side" title="Compare side-by-side">⇄</button>
     <button class="fav${FAVS.has(x.u)?" on":""}" data-u="${x.u}" aria-label="Save to favorites" title="Save to favorites">${FAVS.has(x.u)?"♥":"♡"}</button>
     <button class="info" data-u="${x.u}" aria-label="Resource details" title="Resource details">ⓘ</button>
@@ -1053,6 +1064,7 @@ function card(x){
 }
 function renderSection(){
   const data=SECTIONS[activeTab]||[];
+  const allTotal=data.reduce((a,g)=>a+g.i.length,0);
   let total=0,html="";
   data.forEach((g,gi)=>{
     let items=g.i.filter(x=>matches(x,g.c));
@@ -1068,7 +1080,7 @@ function renderSection(){
         <button class="cat-print" data-t="${activeTab}" data-g="${gi}" title="Print this category as a clean paper checklist" aria-label="Print this category"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg></button>
         ${g.note?`<div class="cat-note">${g.note}</div>`:""}
       </div>
-      <div class="grid">${items.map(card).join("")}</div>
+      <div class="grid">${items.map((x,xi)=>card(x,xi===(items.findIndex(z=>z.f)>=0?items.findIndex(z=>z.f):0))).join("")}</div>
     </div>`;
   });
   const list=document.getElementById(activeTab+"-list");
@@ -1076,7 +1088,7 @@ function renderSection(){
   const tabLabel=sectLabel(activeTab);
   document.getElementById("count").innerHTML= total===0
     ? `No matches in <b>${tabLabel}</b>`
-    : `<b>${total}</b> resource${total===1?"":"s"} in ${tabLabel}${state?" · "+state:""}`;
+    : `<b>${total}</b> of ${allTotal} resources in ${tabLabel}${state?" · "+state:""}`;
   document.querySelectorAll(".empty").forEach(e=>e.remove());
   if(total===0 && list){
     const hasOther=fns.size||cost||dlOnly||topOnly||newOnly||savedOnly;
@@ -1331,7 +1343,7 @@ function renderChips(){
   const groups=FNGROUPS.concat(extra.length?[["This section",extra]]:[]);
   chipBox.innerHTML=FNGROUPs_map(groups,activeTab==="profile"||activeTab==="submit"||activeTab==="about"?null:c,fns);
 }
-function FNGROUPs_map(groups,c,sel){return groups.map(function(gp){var label=gp[0],fs=gp[1];return '<span class="chipg">'+label+'</span>'+fs.map(function(f){var n=c?(c[f]||0):0;return '<button class="chip'+(sel&&sel.has(f)?" on":"")+(n===0&&c?" zero":"")+'" data-fn="'+f+'">'+f+'<span class="cc">'+n+'</span></button>';}).join("");}).join("");}
+function FNGROUPs_map(groups,c,sel){return groups.map(function(gp){var label=gp[0],fs=gp[1];return '<span class="chipg">'+label+'</span>'+fs.map(function(f){var n=c?(c[f]||0):0;return '<button class="chip'+(sel&&sel.has(f)?" on":"")+(n===0&&c?" zero":"")+'"'+(n===0&&c?' disabled aria-disabled="true" tabindex="-1"':'')+' data-fn="'+f+'">'+f+'<span class="cc">'+n+'</span></button>';}).join("");}).join("");}
 chipBox.addEventListener("click",e=>{const b=e.target.closest(".chip");if(!b)return;const f=b.dataset.fn;if(fns.has(f))fns.delete(f);else fns.add(f);renderChips();renderSection();});
 renderChips();
 /* states */
